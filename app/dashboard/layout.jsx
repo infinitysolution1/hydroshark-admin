@@ -1,6 +1,7 @@
 import React from "react";
 import AdminNavBar from "@/components/AdminNavBar";
 import Sidebar from "@/components/Sidebar";
+import CreateProductModal from "@/components/Modals/CreateProductModal";
 
 export const metadata = {
   title: "Dashboard | Hydroshark",
@@ -17,6 +18,7 @@ const Layout = ({ children }) => {
         </div>
         <div className=" flex flex-col w-[80vw]">{children}</div>
       </div>
+      <CreateProductModal />
     </main>
   );
 };
