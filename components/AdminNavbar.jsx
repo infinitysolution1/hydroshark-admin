@@ -18,7 +18,7 @@ const AdminNavBar = () => {
         </p>
       </div>
       <div className="flex flex-row justify-between items-center gap-x-4">
-        <a className="text-lg  text-black">Logout</a>
+        <a className="text-lg cursor-pointer  text-black">Logout</a>
       </div>
     </div>
   );
