@@ -49,7 +49,10 @@ const page = () => {
 
       <div className=" w-full grid grid-cols-3 gap-4 mt-8">
         {charts.map((chart, index) => (
-          <div className=" w-full h-[40vh] bg-white rounded-lg shadow-md px-2 py-2 flex flex-col justify-between">
+          <div
+            key={index}
+            className=" w-full h-[40vh] bg-white rounded-lg shadow-md px-2 py-2 flex flex-col justify-between"
+          >
             <p className=" text-base text-black">{chart.title}</p>
             <div className=" w-full flex flex-col items-start justify-start h-[35vh] p-2 rounded-lg">
               {chart.title === "Online Store Conversion Rate" ? (
