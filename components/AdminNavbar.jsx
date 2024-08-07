@@ -2,7 +2,7 @@
 import React from "react";
 import Image from "next/image";
 
-const AdminNavBar = () => {
+const AdminNavbar = () => {
   return (
     <div className=" flex flex-row justify-between h-[10vh] w-full items-center px-8 border-b-[0.5px] border-[#c7c7c7]">
       <div className=" flex flex-row justify-start items-center">
@@ -24,4 +24,4 @@ const AdminNavBar = () => {
   );
 };
 
-export default AdminNavBar;
+export default AdminNavbar;
