@@ -157,7 +157,10 @@ const CreateProductModal = () => {
 
                 {productSubSections.map((item, index) => {
                   return (
-                    <form className=" w-full grid grid-cols-2 gap-4 items-start bg-gray-100 mt-2 p-4">
+                    <form
+                      key={index}
+                      className=" w-full grid grid-cols-2 gap-4 items-start bg-gray-100 mt-2 p-4"
+                    >
                       <div className="flex flex-col w-full mt-2">
                         <label
                           className={`${labelClass}`}
