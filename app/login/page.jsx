@@ -4,22 +4,63 @@ import { FieldValues, useForm } from "react-hook-form";
 import instance from "@/utils/instance";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import OTPInput from "react-otp-input";
+import useStore from "@/utils/store";
 
 const textClass = "text-[#333]";
 
 const Login = () => {
   const router = useRouter();
   const [error, setError] = useState("");
+  const [showOtp, setShowOtp] = useState(false);
+  const [otp, setOtp] = useState("");
+  const { setUser, user } = useStore();
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
     setValue,
-  } = useForm();
+    getValues,
+  } = useForm({
+    defaultValues: {
+      phone: "",
+    },
+  });
 
   const onSubmit = (data) => {
-    router.push("/dashboard");
+    let obj = {
+      phone_number: data.phone,
+    };
+    instance
+      .post("/accounts/send-otp/", obj)
+      .then((res) => {
+        console.log("res", res);
+        setShowOtp(true);
+      })
+      .catch((err) => {
+        console.log("err", err);
+        setError(err.response.data.message);
+      });
+  };
+
+  const handleLogin = () => {
+    let obj = {
+      phone_number: getValues("phone"),
+      otp: otp,
+    };
+    instance
+      .post("/accounts/login/", obj)
+      .then((res) => {
+        console.log("res", res);
+        localStorage.setItem("token", res.data.access_token);
+        setUser(res.data.user);
+        router.push("/dashboard");
+      })
+      .catch((err) => {
+        console.log("err", err);
+        setError(err.response.data.message);
+      });
   };
 
   return (
@@ -31,6 +72,7 @@ const Login = () => {
           objectFit="cover"
         />
       </div>
+
       <div className=" z-20 flex flex-col items-center justify-center w-6/12 h-[60vh] bg-white border-[0.5px] border-[#c7c7c7]/70 rounded-2xl shadow-xl">
         <div className=" flex flex-row justify-center items-center">
           <div className=" h-[7.5vh] w-[7.5vh] relative">
@@ -45,59 +87,81 @@ const Login = () => {
           </p>
         </div>
         <h2 className="text-2xl font-bold text-[#333] mt-4">Login</h2>
-        <form
-          className="flex flex-col items-center w-8/12"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <div className="flex flex-col w-full">
-            <label htmlFor="email" className={textClass}>
-              Email
+        {showOtp ? (
+          <div className=" w-full flex flex-col items-center justify-center mt-4">
+            <label htmlFor="phone" className={`${textClass} my-2`}>
+              Verify OTP
             </label>
-            <input
-              type="text"
-              id="email"
-              placeholder="Email"
-              className="w-full p-2 my-1 text-black border-[0.5px] border-[#c7c7c7] rounded-md"
-              {...register("email", { required: "Email is required" })}
+            <OTPInput
+              value={otp}
+              onChange={setOtp}
+              numInputs={6}
+              inputType={"number"}
+              placeholder="123456"
+              inputStyle={{
+                width: "40px",
+                height: "40px",
+                borderWidth: "1px",
+                marginRight: 8,
+                textAlign: "center",
+                color: "#000000",
+              }}
+              containerStyle={{}}
+              renderInput={(props) => (
+                <input
+                  autoComplete="off"
+                  aria-label="Please enter OTP character 1"
+                  className="inputStyle rounded-lg"
+                  {...props}
+                />
+              )}
             />
-            {errors?.email ? (
-              <span className="text-red-500 text-xs">
-                {errors?.email?.message?.toString() || ""}
-              </span>
-            ) : (
-              <span className=" text-sm"> </span>
-            )}
-          </div>
-          <div className="flex flex-col w-full mt-4">
-            <label htmlFor="password" className={textClass}>
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              placeholder="Password"
-              className="w-full p-2 my-1 text-black border-[0.5px] border-[#c7c7c7] rounded-md"
-              {...register("password", { required: "Password is required" })}
-            />
-            {errors.password ? (
-              <span className="text-red-500 text-xs">
-                {errors?.password?.message?.toString() || ""}
-              </span>
-            ) : (
-              <span className=" text-sm"> </span>
-            )}
-          </div>
 
-          <button
-            type="submit"
-            className="w-full p-2 mt-4 bg-[#333] text-white rounded-md"
+            <button
+              className="px-8 p-2 mt-4 bg-[#333] text-white rounded-md"
+              onClick={() => {
+                handleLogin();
+              }}
+            >
+              Verify
+            </button>
+          </div>
+        ) : (
+          <form
+            className="flex flex-col items-center w-8/12 my-2"
+            onSubmit={handleSubmit(onSubmit)}
           >
-            Login
-          </button>
-          <a className="underline mt-2 cursor-pointer text-black">
-            {"Forgot Password "}
-          </a>
-        </form>
+            <div className="flex flex-col w-full">
+              <label htmlFor="phone" className={textClass}>
+                Phone Number
+              </label>
+              <input
+                type="text"
+                id="phone"
+                placeholder="Phone Number"
+                className="w-full p-2 my-1 text-black border-[0.5px] border-[#c7c7c7] rounded-md"
+                {...register("phone", { required: "Email is required" })}
+              />
+              {errors?.email ? (
+                <span className="text-red-500 text-xs">
+                  {errors?.email?.message?.toString() || ""}
+                </span>
+              ) : (
+                <span className=" text-sm"> </span>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="w-full p-2 mt-4 bg-[#333] text-white rounded-md"
+            >
+              Login
+            </button>
+            <a className="underline mt-2 cursor-pointer text-black">
+              {"Forgot Password "}
+            </a>
+          </form>
+        )}
       </div>
     </div>
   );

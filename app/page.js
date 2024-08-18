@@ -1,6 +1,14 @@
+"use client";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import setupLocatorUI from "@locator/runtime";
 
 export default function Home() {
+  useEffect(() => {
+    if (process.env.NODE_ENV === "development") {
+      setupLocatorUI();
+    }
+  }, []);
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
