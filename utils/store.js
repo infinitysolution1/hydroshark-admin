@@ -10,6 +10,9 @@ const useStore = create((set) => ({
   },
   setShowCreateProductModal: (showCreateProductModal) =>
     set({ showCreateProductModal }),
+
+  user: null,
+  setUser: (user) => set({ user }),
 }));
 
 export default useStore;
