@@ -1,10 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { FiTrash2 } from "react-icons/fi";
 import { IoPencilSharp } from "react-icons/io5";
+import instance from "@/utils/instance";
+import Spinner from "@/components/Spinner";
 
 const data = [
   {
@@ -99,54 +101,75 @@ const data = [
   },
 ];
 
-const columns = [
-  {
-    headerName: "User Name",
-    field: "userName",
-  },
-  {
-    headerName: "Phone Number",
-    field: "phoneNumber",
-  },
-  {
-    headerName: "Bank Name",
-    field: "bankName",
-    width: 200,
-  },
-  {
-    headerName: "Branch",
-    field: "branch",
-  },
-  {
-    headerName: "Account Number",
-    field: "accountNumber",
-  },
-  {
-    headerName: "Actions",
-    field: "action",
-    width: 80,
-    cellRenderer: (params) => {
-      return (
-        <div className="flex flex-row group justify-center items-center h-full gap-x-2">
-          <button className="text-red-400 group-hover:text-red-400/80">
-            <FiTrash2 size={20} />
-          </button>
-          <button className="text-black/60 group-hover:text-black/80">
-            <IoPencilSharp size={20} />
-          </button>
-        </div>
-      );
-    },
-  },
-];
-
 const UserDataTable = () => {
   const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+
+  const getUserList = () => {
+    setLoading(true);
+    instance
+      .get("/accounts/user/")
+      .then((res) => {
+        console.log("res", res);
+        setData(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log("err", err);
+        setLoading(false);
+      });
+  };
+
+  // useEffect(() => {
+  //   getUserList();
+  // }, []);
+
+  const columns = [
+    {
+      headerName: "User Name",
+      field: "userName",
+    },
+    {
+      headerName: "Phone Number",
+      field: "phoneNumber",
+    },
+    {
+      headerName: "Bank Name",
+      field: "bankName",
+      width: 200,
+    },
+    {
+      headerName: "Branch",
+      field: "branch",
+    },
+    {
+      headerName: "Account Number",
+      field: "accountNumber",
+    },
+    {
+      headerName: "Actions",
+      field: "action",
+      width: 80,
+      cellRenderer: (params) => {
+        return (
+          <div className="flex flex-row group justify-center items-center h-full gap-x-2">
+            <button className="text-red-400 group-hover:text-red-400/80">
+              <FiTrash2 size={20} />
+            </button>
+            <button className="text-black/60 group-hover:text-black/80">
+              <IoPencilSharp size={20} />
+            </button>
+          </div>
+        );
+      },
+    },
+  ];
 
   if (loading) {
     return (
-      <div className="flex flex-col h-[70vh] w-full justify-center items-center">
-        <p className="text-sm mt-2 text-purple-400">Loading user Data</p>
+      <div className="flex flex-col h-[60vh] w-full justify-center items-center">
+        <Spinner loading={loading} />
+        <p className="text-base mt-2 text-black">Loading User Data</p>
       </div>
     );
   }
