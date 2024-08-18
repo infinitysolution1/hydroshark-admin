@@ -7,6 +7,7 @@ import { MdAddShoppingCart } from "react-icons/md";
 import { MdOutlineViewList } from "react-icons/md";
 import { MdCheckCircleOutline } from "react-icons/md";
 import { MdOutlineMessage } from "react-icons/md";
+import { PiFlagBanner } from "react-icons/pi";
 
 const options = [
   {
@@ -33,6 +34,11 @@ const options = [
     title: "Orders",
     path: "/dashboard/orders",
     icon: () => <MdCheckCircleOutline className=" text-black text-xl" />,
+  },
+  {
+    title: "Banner",
+    path: "/dashboard/banner",
+    icon: () => <PiFlagBanner className=" text-black text-xl" />,
   },
   {
     title: "Feedback",

@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Image from "next/image";
+import useStore from "@/utils/store";
 
 const AdminNavbar = () => {
   return (
@@ -17,8 +18,16 @@ const AdminNavbar = () => {
           HYDROSHARK ADMIN
         </p>
       </div>
-      <div className="flex flex-row justify-between items-center gap-x-4">
-        <a className="text-lg cursor-pointer  text-black">Logout</a>
+      <div
+        onClick={() => {
+          localStorage.clear();
+          sessionStorage.clear();
+          window.location.href = "/login";
+          useStore.setState({ user: null });
+        }}
+        className="flex flex-row justify-between items-center gap-x-4 bg-gray-200 p-2 rounded-md"
+      >
+        <a className="text-sm cursor-pointer  text-black">Logout</a>
       </div>
     </div>
   );
