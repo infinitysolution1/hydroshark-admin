@@ -1,10 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import useStore from "@/utils/store";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { IoMdClose } from "react-icons/io";
 import { useDropzone } from "react-dropzone";
 import { MdOutlineFileUpload } from "react-icons/md";
+import instance from "@/utils/instance";
+import Spinner from "../Spinner";
 
 const defaultValues = {
   productName: "",
@@ -17,42 +19,16 @@ const defaultValues = {
   hydrosharkPoints: 0,
 };
 
-// {
-//   "product_id": 1,
-//   "product_title": "Hydroshark Mango",
-//   "product_description": "test descirption",
-//   "hydroshark_points_accepted": false,
-//   "product_sections": [
-//     {
-//       "product_section_id": 1,
-//       "section_title": "Pack of 4",
-//       "quantity": 12,
-//       "original_price": 999,
-//       "discount_percentage": "10%",
-//       "discouted_amount": 901,
-//       "in_stock": false
-//     },
-//     {
-//       "product_section_id": 2,
-//       "section_title": "Pack of 12",
-//       "quantity": 12,
-//       "original_price": 999,
-//       "discount_percentage": "10%",
-//       "discouted_amount": 901,
-//       "in_stock": false
-//     }
-//   ],
-//   "product_images": []
-// }
-
 const labelClass = "text-black text-lg ";
 const inputClass =
   "border border-black rounded-md p-1 text-black focus:outline-none";
 
 const CreateProductModal = () => {
+  const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const { showCreateProductModal, setShowCreateProductModal } = useStore();
   const [productSubSections, setProductSubSections] = useState([]);
+  const [productData, setProductData] = useState({});
 
   const onDrop = (acceptedFiles) => {
     setValue("productImage", acceptedFiles[0]);
@@ -65,9 +41,15 @@ const CreateProductModal = () => {
     handleSubmit,
     setValue,
     reset,
+    control,
     formState: { errors },
   } = useForm({
     defaultValues: defaultValues,
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: control,
+    name: "productSubSections",
   });
 
   useEffect(() => {
@@ -80,76 +62,126 @@ const CreateProductModal = () => {
     setIsOpen(false);
   };
 
+  const getProductSubSections = (id) => {
+    instance
+      .get(`/drinks/product-section/${id}/`)
+      .then((res) => {
+        setLoading(false);
+        console.log("res", res.data);
+        setProductSubSections([res.data]);
+      })
+      .catch((err) => {
+        console.log("err", err);
+        setLoading(false);
+      });
+  };
+
+  const getProducts = (id) => {
+    setLoading(true);
+    instance
+      .get(`/drinks/product/${id}/`)
+      .then((res) => {
+        setProductData(res.data);
+        setValue("productName", res.data.product_title);
+        setValue("productDescription", res.data.product_description);
+        getProductSubSections(id);
+      })
+      .catch((err) => {
+        console.log("err", err);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    if (showCreateProductModal.mode == "edit") {
+      getProducts(showCreateProductModal.id);
+    }
+  }, [showCreateProductModal]);
+
   return (
     <div
       className={`${
         isOpen ? "fixed" : "hidden"
       } z-50 inset-0 flex items-center justify-center bg-black/30`}
     >
-      <div className="bg-white w-8/12 max-h-[80vh] overflow-y-scroll py-6 px-8 flex flex-col ">
-        <div className="flex flex-col w-full">
-          <div className="flex flex-row w-full justify-end ">
-            <a
-              onClick={() => {
-                handleModalClose();
-              }}
-              className="cursor-pointer"
-            >
-              <IoMdClose className="text-black/60 text-2xl" />
-            </a>
+      <div className="bg-white w-8/12 max-h-[80vh] overflow-y-scroll py-6 px-8 rounded-md flex flex-col ">
+        {loading ? (
+          <div className=" h-[50vh] relative flex flex-col items-center justify-center w-full">
+            <Spinner loading={loading} />
           </div>
-          <div className=" w-full flex flex-col items-start">
-            <p className=" text-black text-3xl font-semibold">{`${
-              showCreateProductModal.mode == "create" ? "Create" : "Edit"
-            } Product`}</p>
+        ) : (
+          <div className="flex flex-col w-full">
+            <div className="flex flex-row w-full justify-end ">
+              <a
+                onClick={() => {
+                  handleModalClose();
+                }}
+                className="cursor-pointer"
+              >
+                <IoMdClose className="text-black/60 text-2xl" />
+              </a>
+            </div>
+            <div className=" w-full flex flex-col items-start">
+              <p className=" text-black text-3xl font-semibold">{`${
+                showCreateProductModal.mode == "create" ? "Create" : "Edit"
+              } Product`}</p>
 
-            <form className="flex flex-col w-full mt-4">
-              <div className=" w-full grid grid-cols-2 gap-4">
-                <div className="flex flex-col w-full mt-2">
-                  <label className={`${labelClass}`} htmlFor="productName">
-                    Product Name
+              <form className="flex flex-col w-full mt-4">
+                <div className=" w-full grid grid-cols-2 gap-4">
+                  <div className="flex flex-col w-full mt-2">
+                    <label className={`${labelClass}`} htmlFor="productName">
+                      Product Name
+                    </label>
+                    <input
+                      type="text"
+                      id="productName"
+                      {...register("productName", { required: true })}
+                      className={`${inputClass}`}
+                    />
+                    {errors.productName && (
+                      <p className="text-red-500">Product Name is required</p>
+                    )}
+                  </div>
+                  <div className="flex flex-col w-full mt-2">
+                    <label
+                      className={`${labelClass}`}
+                      htmlFor="productCategory"
+                    >
+                      Product Category
+                    </label>
+                    <input
+                      type="text"
+                      id="productCategory"
+                      {...register("productCategory", { required: true })}
+                      className={`${inputClass}`}
+                    />
+                    {errors.productCategory && (
+                      <p className="text-red-500">
+                        Product Category is required
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex flex-col w-full mt-4">
+                  <label
+                    className={`${labelClass}`}
+                    htmlFor="productDescription"
+                  >
+                    Product Description
                   </label>
-                  <input
-                    type="text"
-                    id="productName"
-                    {...register("productName", { required: true })}
-                    className={`${inputClass}`}
+                  <textarea
+                    id="productDescription"
+                    {...register("productDescription", { required: true })}
+                    className={`${inputClass} h-[10vh]`}
                   />
-                  {errors.productName && (
-                    <p className="text-red-500">Product Name is required</p>
+                  {errors.productDescription && (
+                    <p className="text-red-500">
+                      Product Description is required
+                    </p>
                   )}
                 </div>
-                <div className="flex flex-col w-full mt-2">
-                  <label className={`${labelClass}`} htmlFor="productCategory">
-                    Product Category
-                  </label>
-                  <input
-                    type="text"
-                    id="productCategory"
-                    {...register("productCategory", { required: true })}
-                    className={`${inputClass}`}
-                  />
-                  {errors.productCategory && (
-                    <p className="text-red-500">Product Category is required</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex flex-col w-full mt-4">
-                <label className={`${labelClass}`} htmlFor="productDescription">
-                  Product Description
-                </label>
-                <textarea
-                  id="productDescription"
-                  {...register("productDescription", { required: true })}
-                  className={`${inputClass} h-[10vh]`}
-                />
-                {errors.productDescription && (
-                  <p className="text-red-500">
-                    Product Description is required
-                  </p>
-                )}
-              </div>
+              </form>
               <div className="flex flex-col w-full mt-4">
                 <label className={`${labelClass}`} htmlFor="productDescription">
                   Product Component
@@ -170,30 +202,32 @@ const CreateProductModal = () => {
                         </label>
                         <input
                           type="text"
-                          id="productName"
-                          {...register("productName", { required: true })}
+                          id="section_title"
+                          {...register(
+                            `productSubSections.${index}.section_title`,
+                            { required: true }
+                          )}
                           className={`${inputClass}`}
                         />
-                        {errors.productName && (
+                        {errors.section_title && (
                           <p className="text-red-500">
                             Product Name is required
                           </p>
                         )}
                       </div>
                       <div className="flex flex-col w-full mt-2">
-                        <label
-                          className={`${labelClass}`}
-                          htmlFor="originalPrice"
-                        >
+                        <label className={`${labelClass}`} htmlFor="price">
                           Original Price
                         </label>
                         <input
                           type="number"
-                          id="originalPrice"
-                          {...register("originalPrice", { required: true })}
+                          id="price"
+                          {...register(`productSubSections.${index}.price`, {
+                            required: true,
+                          })}
                           className={`${inputClass}`}
                         />
-                        {errors.originalPrice && (
+                        {errors.price && (
                           <p className="text-red-500">
                             Original Price is required
                           </p>
@@ -202,17 +236,20 @@ const CreateProductModal = () => {
                       <div className="flex flex-col w-full mt-2">
                         <label
                           className={`${labelClass}`}
-                          htmlFor="discountedPrice"
+                          htmlFor="discounted_amount"
                         >
                           Discounted Price
                         </label>
                         <input
                           type="number"
-                          id="discountedPrice"
-                          {...register("discountedPrice", { required: true })}
+                          id="discounted_amount"
+                          {...register(
+                            `productSubSections.${index}.discounted_amount`,
+                            { required: true }
+                          )}
                           className={`${inputClass} `}
                         />
-                        {errors.discountedPrice && (
+                        {errors.discounted_amount && (
                           <p className="text-red-500">
                             Discounted Price is required
                           </p>
@@ -221,34 +258,39 @@ const CreateProductModal = () => {
                       <div className="flex flex-col w-full mt-2">
                         <label
                           className={`${labelClass}`}
-                          htmlFor="productName"
+                          htmlFor="discount_percentage"
                         >
                           Discount Percent
                         </label>
                         <input
                           type="text"
-                          id="productName"
-                          {...register("productName", { required: true })}
+                          id="discount_percentage"
+                          {...register(
+                            `productSubSections.${index}.discount_percentage`,
+                            { required: true }
+                          )}
                           className={`${inputClass}`}
                         />
-                        {errors.productName && (
+                        {errors.discount_percentage && (
                           <p className="text-red-500">
-                            Product Name is required
+                            Discount Percentage is required
                           </p>
                         )}
                       </div>
-                      <div className="flex flex-row w-full mt-2">
+                      <div className="flex flex-row w-full items-center">
                         <input
                           type="checkbox"
-                          id="productName"
-                          {...register("productName", { required: true })}
-                          className={`${inputClass} text-2xl`}
+                          id="in_stock"
+                          {...register(`productSubSections.${index}.in_stock`, {
+                            required: true,
+                          })}
+                          className={`${inputClass} text-4xl h-4 w-4 `}
                         />
                         <label
                           className={`${labelClass} ml-2`}
-                          htmlFor="productName"
+                          htmlFor="in_stock"
                         >
-                          In Stock
+                          Item in stock
                         </label>
                       </div>
                       <div className=" flex flex-row justify-end w-full mt-4 gap-x-4">
@@ -323,9 +365,9 @@ const CreateProductModal = () => {
                   {showCreateProductModal.mode == "create" ? "Create" : "Edit"}
                 </button>
               </div>
-            </form>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
