@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import useStore from "@/utils/store";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, set, get } from "react-hook-form";
 import { IoMdClose } from "react-icons/io";
 import { useDropzone } from "react-dropzone";
 import { MdOutlineFileUpload } from "react-icons/md";
@@ -28,6 +28,7 @@ const CreateProductModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { showCreateProductModal, setShowCreateProductModal } = useStore();
   const [productSubSections, setProductSubSections] = useState([]);
+  const [newProductSubSections, setNewProductSubSections] = useState([]);
   const [productData, setProductData] = useState({});
 
   const onDrop = (acceptedFiles) => {
@@ -41,15 +42,29 @@ const CreateProductModal = () => {
     handleSubmit,
     setValue,
     reset,
+    getValues,
     control,
     formState: { errors },
   } = useForm({
     defaultValues: defaultValues,
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const {
+    fields: fields1,
+    append: append1,
+    remove: remove1,
+  } = useFieldArray({
     control: control,
     name: "productSubSections",
+  });
+
+  const {
+    fields: fields2,
+    append: append2,
+    remove: remove2,
+  } = useFieldArray({
+    control: control,
+    name: "newProductSubSections",
   });
 
   useEffect(() => {
@@ -62,13 +77,27 @@ const CreateProductModal = () => {
     setIsOpen(false);
   };
 
-  const getProductSubSections = (id) => {
+  const CreateProductSection = (index) => {
+    let obj = {
+      linked_product: productData.id,
+      section_title: parseInt(
+        getValues(`newProductSubSections.${index}.section_title`)
+      ),
+      price: parseInt(getValues(`newProductSubSections.${index}.price`)),
+      discounted_amount: parseInt(
+        getValues(`newProductSubSections.${index}.discounted_amount`)
+      ),
+      discount_percentage: parseInt(
+        getValues(`newProductSubSections.${index}.discount_percentage`)
+      ),
+    };
+
+    setLoading(true);
     instance
-      .get(`/drinks/product-section/${id}/`)
+      .post("/drinks/product-section/", obj)
       .then((res) => {
         setLoading(false);
-        console.log("res", res.data);
-        setProductSubSections([res.data]);
+        getProducts(productData.id);
       })
       .catch((err) => {
         console.log("err", err);
@@ -81,10 +110,49 @@ const CreateProductModal = () => {
     instance
       .get(`/drinks/product/${id}/`)
       .then((res) => {
-        setProductData(res.data);
+        setLoading(false);
+        setProductData("res", res.data);
+        setProductSubSections(res.data.product_sections);
         setValue("productName", res.data.product_title);
         setValue("productDescription", res.data.product_description);
-        getProductSubSections(id);
+
+        res.data.product_sections.map((item, index) => {
+          setValue(
+            `productSubSections.${index}.section_title`,
+            item.section_title
+          );
+          setValue(`productSubSections.${index}.price`, item.price);
+          setValue(
+            `productSubSections.${index}.discounted_amount`,
+            item.discounted_amount
+          );
+          setValue(
+            `productSubSections.${index}.discount_percentage`,
+            item.discount_percentage
+          );
+          setValue(`productSubSections.${index}.in_stock`, item.in_stock);
+        });
+      })
+      .catch((err) => {
+        console.log("err", err);
+        setLoading(false);
+      });
+  };
+
+  const createProduct = () => {
+    setLoading(true);
+    let obj = {
+      product_title: "Product #" + Math.floor(Math.random() * 1000),
+      product_description: "Product Description",
+      hydroshark_points_accepted: false,
+    };
+
+    instance
+      .post("/drinks/product/", obj)
+      .then((res) => {
+        console.log("res", res);
+        setLoading(false);
+        getProducts(res.data.id);
       })
       .catch((err) => {
         console.log("err", err);
@@ -95,6 +163,9 @@ const CreateProductModal = () => {
   useEffect(() => {
     if (showCreateProductModal.mode == "edit") {
       getProducts(showCreateProductModal.id);
+    }
+    if (showCreateProductModal.mode == "create") {
+      createProduct();
     }
   }, [showCreateProductModal]);
 
@@ -142,7 +213,7 @@ const CreateProductModal = () => {
                       <p className="text-red-500">Product Name is required</p>
                     )}
                   </div>
-                  <div className="flex flex-col w-full mt-2">
+                  {/* <div className="flex flex-col w-full mt-2">
                     <label
                       className={`${labelClass}`}
                       htmlFor="productCategory"
@@ -160,7 +231,7 @@ const CreateProductModal = () => {
                         Product Category is required
                       </p>
                     )}
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="flex flex-col w-full mt-4">
@@ -196,9 +267,9 @@ const CreateProductModal = () => {
                       <div className="flex flex-col w-full mt-2">
                         <label
                           className={`${labelClass}`}
-                          htmlFor="productName"
+                          htmlFor="section_title"
                         >
-                          Product Sub-Section Title
+                          Product Section Title
                         </label>
                         <input
                           type="text"
@@ -296,13 +367,146 @@ const CreateProductModal = () => {
                       <div className=" flex flex-row justify-end w-full mt-4 gap-x-4">
                         <button
                           onClick={() => {
-                            handleModalClose();
+                            handleSectionDelete(index);
                           }}
                           className="border-[1px]  border-red-400 text-red-400 bg-white px-4 py-2 rounded-md"
                         >
-                          Cancel
+                          Delete
                         </button>
                         <button className="bg-black text-white px-4 py-2 rounded-md">
+                          Add
+                        </button>
+                      </div>
+                    </form>
+                  );
+                })}
+
+                {newProductSubSections.map((item, index) => {
+                  return (
+                    <form
+                      key={index}
+                      className=" w-full grid grid-cols-2 gap-4 items-start bg-gray-100 mt-2 p-4"
+                    >
+                      <div className="flex flex-col w-full mt-2">
+                        <label
+                          className={`${labelClass}`}
+                          htmlFor="section_title"
+                        >
+                          Product Section Title
+                        </label>
+                        <input
+                          type="text"
+                          id="section_title"
+                          {...register(
+                            `newProductSubSections.${index}.section_title`,
+                            { required: true }
+                          )}
+                          className={`${inputClass}`}
+                        />
+                        {errors.section_title && (
+                          <p className="text-red-500">
+                            Product Name is required
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex flex-col w-full mt-2">
+                        <label className={`${labelClass}`} htmlFor="price">
+                          Original Price
+                        </label>
+                        <input
+                          type="number"
+                          id="price"
+                          {...register(`newProductSubSections.${index}.price`, {
+                            required: true,
+                          })}
+                          className={`${inputClass}`}
+                        />
+                        {errors.price && (
+                          <p className="text-red-500">
+                            Original Price is required
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex flex-col w-full mt-2">
+                        <label
+                          className={`${labelClass}`}
+                          htmlFor="discounted_amount"
+                        >
+                          Discounted Price
+                        </label>
+                        <input
+                          type="number"
+                          id="discounted_amount"
+                          {...register(
+                            `newProductSubSections.${index}.discounted_amount`,
+                            { required: true }
+                          )}
+                          className={`${inputClass} `}
+                        />
+                        {errors.discounted_amount && (
+                          <p className="text-red-500">
+                            Discounted Price is required
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex flex-col w-full mt-2">
+                        <label
+                          className={`${labelClass}`}
+                          htmlFor="discount_percentage"
+                        >
+                          Discount Percent
+                        </label>
+                        <input
+                          type="text"
+                          id="discount_percentage"
+                          {...register(
+                            `newProductSubSections.${index}.discount_percentage`,
+                            { required: true }
+                          )}
+                          className={`${inputClass}`}
+                        />
+                        {errors.discount_percentage && (
+                          <p className="text-red-500">
+                            Discount Percentage is required
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex flex-row w-full items-center">
+                        <input
+                          type="checkbox"
+                          id="in_stock"
+                          {...register(
+                            `newProductSubSections.${index}.in_stock`,
+                            {
+                              required: true,
+                            }
+                          )}
+                          className={`${inputClass} text-4xl h-4 w-4 `}
+                        />
+                        <label
+                          className={`${labelClass} ml-2`}
+                          htmlFor="in_stock"
+                        >
+                          Item in stock
+                        </label>
+                      </div>
+                      <div className=" flex flex-row justify-end w-full mt-4 gap-x-4">
+                        <button
+                          onClick={() => {
+                            setNewProductSubSections(
+                              [...newProductSubSections].splice(index, 1)
+                            );
+                          }}
+                          className="border-[1px]  border-red-400 text-red-400 bg-white px-4 py-2 rounded-md"
+                        >
+                          Delete
+                        </button>
+                        <button
+                          onClick={() => {
+                            CreateProductSection(index);
+                          }}
+                          className="bg-black text-white px-4 py-2 rounded-md"
+                        >
                           Add
                         </button>
                       </div>
@@ -314,8 +518,8 @@ const CreateProductModal = () => {
                   <button
                     className="bg-black text-white px-4 py-2 rounded-md"
                     onClick={() => {
-                      setProductSubSections([
-                        ...productSubSections,
+                      setNewProductSubSections([
+                        ...newProductSubSections,
                         {
                           originalPrice: "",
                           discountedPrice: "",
