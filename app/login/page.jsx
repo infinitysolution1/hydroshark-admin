@@ -157,9 +157,6 @@ const Login = () => {
             >
               Login
             </button>
-            <a className="underline mt-2 cursor-pointer text-black">
-              {"Forgot Password "}
-            </a>
           </form>
         )}
       </div>

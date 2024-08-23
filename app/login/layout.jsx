@@ -1,11 +1,18 @@
-import React from "react";
-
-export const metadata = {
-  title: " Login | Hydroshark",
-  description: "India's First Carbonated Hydration Drink",
-};
+"use client";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const Layout = ({ children }) => {
+  const router = useRouter();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    console.log("token", token);
+    if (token) {
+      router.push("/dashboard");
+    }
+  }, []);
+
   return <main>{children}</main>;
 };
 
