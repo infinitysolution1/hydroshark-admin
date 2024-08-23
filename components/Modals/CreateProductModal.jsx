@@ -53,6 +53,7 @@ const CreateProductModal = () => {
     fields: fields1,
     append: append1,
     remove: remove1,
+    replace: replace1,
   } = useFieldArray({
     control: control,
     name: "productSubSections",
@@ -62,6 +63,7 @@ const CreateProductModal = () => {
     fields: fields2,
     append: append2,
     remove: remove2,
+    replace: replace2,
   } = useFieldArray({
     control: control,
     name: "newProductSubSections",
