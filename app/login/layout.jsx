@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 
 const Layout = ({ children }) => {
   const router = useRouter();
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 

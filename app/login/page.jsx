@@ -1,16 +1,18 @@
 "use client";
 import React, { useState } from "react";
-import { FieldValues, useForm } from "react-hook-form";
+import { FieldValues, set, useForm } from "react-hook-form";
 import instance from "@/utils/instance";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import OTPInput from "react-otp-input";
 import useStore from "@/utils/store";
+import Spinner from "@/components/Spinner";
 
 const textClass = "text-[#333]";
 
 const Login = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showOtp, setShowOtp] = useState(false);
   const [otp, setOtp] = useState("");
@@ -29,6 +31,7 @@ const Login = () => {
   });
 
   const onSubmit = (data) => {
+    setLoading(true);
     let obj = {
       phone_number: data.phone,
     };
@@ -37,27 +40,39 @@ const Login = () => {
       .then((res) => {
         console.log("res", res);
         setShowOtp(true);
+        setLoading(false);
       })
       .catch((err) => {
+        setLoading(false);
         console.log("err", err);
         setError(err.response.data.message);
       });
   };
 
   const handleLogin = () => {
+    setLoading(true);
     let obj = {
       phone_number: getValues("phone"),
       otp: otp,
     };
+
     instance
       .post("/accounts/login/", obj)
       .then((res) => {
-        console.log("res", res);
-        localStorage.setItem("token", res.data.access_token);
-        setUser(res.data.user);
-        router.push("/dashboard");
+        if (res.data.user.is_superuser) {
+          console.log("res", res);
+          localStorage.setItem("token", res.data.access_token);
+          setUser(res.data.user);
+          router.push("/dashboard");
+          setLoading(false);
+        } else {
+          throw new Error("You are not authorized to access this page");
+          // setError("You are not authorized to access this page");
+          setLoading(false);
+        }
       })
       .catch((err) => {
+        setLoading(false);
         console.log("err", err);
         setError(err.response.data.message);
       });
@@ -123,7 +138,11 @@ const Login = () => {
                 handleLogin();
               }}
             >
-              Verify
+              {loading ? (
+                <Spinner loading={loading} size={24} color={"#fff"} />
+              ) : (
+                <p>Verify</p>
+              )}
             </button>
           </div>
         ) : (
@@ -155,7 +174,11 @@ const Login = () => {
               type="submit"
               className="w-full p-2 mt-4 bg-[#333] text-white rounded-md"
             >
-              Login
+              {loading ? (
+                <Spinner loading={loading} size={24} color={"#fff"} />
+              ) : (
+                <p>Login</p>
+              )}
             </button>
           </form>
         )}
