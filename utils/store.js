@@ -7,6 +7,7 @@ const useStore = create((set) => ({
     show: false,
     id: "",
     mode: "create",
+    refresh: false,
   },
   setShowCreateProductModal: (showCreateProductModal) =>
     set({ showCreateProductModal }),
@@ -20,6 +21,13 @@ const useStore = create((set) => ({
   },
   setShowUserDetailsModal: (showUserDetailsModal) =>
     set({ showUserDetailsModal }),
+
+  showOrderDetailsModal: {
+    show: false,
+    id: "",
+  },
+  setShowOrderDetailsModal: (showOrderDetailsModal) =>
+    set({ showOrderDetailsModal }),
 }));
 
 export default useStore;

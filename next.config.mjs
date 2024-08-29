@@ -6,6 +6,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "d2g3h1gpjmm5ra.cloudfront.net",
       },
+      {
+        protocol: "https",
+        hostname: "d39g9o3xvlax7g.cloudfront.net",
+      },
     ],
   },
   //   transpilePackages: ["three"],
