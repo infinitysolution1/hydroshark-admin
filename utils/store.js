@@ -13,6 +13,13 @@ const useStore = create((set) => ({
 
   user: null,
   setUser: (user) => set({ user }),
+
+  showUserDetailsModal: {
+    show: false,
+    id: "",
+  },
+  setShowUserDetailsModal: (showUserDetailsModal) =>
+    set({ showUserDetailsModal }),
 }));
 
 export default useStore;
