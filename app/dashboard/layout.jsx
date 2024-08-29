@@ -3,6 +3,7 @@ import AdminNavbar from "@/components/AdminNavbar";
 import Sidebar from "@/components/Sidebar";
 import CreateProductModal from "@/components/Modals/CreateProductModal";
 import ViewUserDetailsModal from "@/components/Modals/ViewUserDetailsModal";
+import ViewOrderDetailsModal from "@/components/Modals/ViewOrderDetailsModal";
 
 export const metadata = {
   title: "Dashboard | Hydroshark",
@@ -21,6 +22,7 @@ const Layout = ({ children }) => {
       </div>
       <CreateProductModal />
       <ViewUserDetailsModal />
+      <ViewOrderDetailsModal />
     </main>
   );
 };

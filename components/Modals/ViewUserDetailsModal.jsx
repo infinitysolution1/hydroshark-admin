@@ -111,7 +111,7 @@ const ViewUserDetailsModal = () => {
         ) : (
           <div className="flex flex-col w-full">
             <div className="flex flex-row justify-between items-center w-full">
-              <h1 className="text-black text-2xl font-bold">User Details</h1>
+              <h3 className="text-black text-2xl font-bold">User Details</h3>
               <IoMdClose
                 onClick={() => handleModalClose()}
                 className="text-black text-2xl cursor-pointer"
