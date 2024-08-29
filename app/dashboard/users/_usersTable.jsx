@@ -1,117 +1,51 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
 import { FiTrash2 } from "react-icons/fi";
 import { IoPencilSharp } from "react-icons/io5";
 import instance from "@/utils/instance";
 import Spinner from "@/components/Spinner";
+import { GoInbox } from "react-icons/go";
+import { FaRegUser } from "react-icons/fa";
+import { LuEye } from "react-icons/lu";
+import { MdEdit, MdDelete } from "react-icons/md";
+import ConfirmDeleteModal from "@/components/Modals/ConfirmDeleteModal";
+import useStore from "@/utils/store";
 
-const data = [
-  {
-    userName: "Dummy user",
-    phoneNumber: "1234567890",
-    email: "dummy@user.com",
-    bankName: "Dummy Bank",
-    branch: "Dummy Branch",
-    accountNumber: "123456789",
-    ifscCode: "DUMMY12345",
-  },
-  {
-    userName: "user 2",
-    phoneNumber: "9876543210",
-    email: "user2@user.com",
-    bankName: "Bank 2",
-    branch: "Branch 2",
-    accountNumber: "987654321",
-    ifscCode: "BANK98765",
-  },
-  {
-    userName: "user 3",
-    phoneNumber: "5555555555",
-    email: "user3@user.com",
-    bankName: "Bank 3",
-    branch: "Branch 3",
-    accountNumber: "555555555",
-    ifscCode: "BANK55555",
-  },
-  {
-    userName: "user 4",
-    phoneNumber: "1111111111",
-    email: "user4@user.com",
-    bankName: "Bank 4",
-    branch: "Branch 4",
-    accountNumber: "111111111",
-    ifscCode: "BANK11111",
-  },
-  {
-    userName: "user 5",
-    phoneNumber: "9999999999",
-    email: "user5@user.com",
-    bankName: "Bank 5",
-    branch: "Branch 5",
-    accountNumber: "999999999",
-    ifscCode: "BANK99999",
-  },
-  {
-    userName: "user 6",
-    phoneNumber: "7777777777",
-    email: "user6@user.com",
-    bankName: "Bank 6",
-    branch: "Branch 6",
-    accountNumber: "777777777",
-    ifscCode: "BANK77777",
-  },
-  {
-    userName: "user 7",
-    phoneNumber: "4444444444",
-    email: "user7@user.com",
-    bankName: "Bank 7",
-    branch: "Branch 7",
-    accountNumber: "444444444",
-    ifscCode: "BANK44444",
-  },
-  {
-    userName: "user 8",
-    phoneNumber: "2222222222",
-    email: "user8@user.com",
-    bankName: "Bank 8",
-    branch: "Branch 8",
-    accountNumber: "222222222",
-    ifscCode: "BANK22222",
-  },
-  {
-    userName: "user 9",
-    phoneNumber: "8888888888",
-    email: "user9@user.com",
-    bankName: "Bank 9",
-    branch: "Branch 9",
-    accountNumber: "888888888",
-    ifscCode: "BANK88888",
-  },
-  {
-    userName: "user 10",
-    phoneNumber: "6666666666",
-    email: "user10@user.com",
-    bankName: "Bank 10",
-    branch: "Branch 10",
-    accountNumber: "666666666",
-    ifscCode: "BANK66666",
-  },
-];
+// const user = [
+//   {
+//     id: 5,
+//     is_superuser: true,
+//     first_name: "",
+//     last_name: "",
+//     is_staff: false,
+//     is_active: true,
+//     date_joined: "2024-08-19T13:30:34.654683Z",
+//     created_at: "2024-08-19T13:30:34.655301Z",
+//     modified_at: "2024-08-26T12:22:43.561939Z",
+//     is_deleted: false,
+//     password: null,
+//     username: "9398542806",
+//     name: "Anirudh Joshi",
+//     phone_number: "9398542806",
+//     email: "anirudhjoshi285@gmail.com",
+//     last_login: "2024-08-26",
+//     groups: [],
+//     user_permissions: [],
+//   },
+// ];
 
 const UserDataTable = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
+  const { showUserDetailsModal, setShowUserDetailsModal } = useStore();
 
   const getUserList = () => {
     setLoading(true);
     instance
-      .get("/accounts/user/")
+      .get("/admin/users/")
       .then((res) => {
         console.log("res", res);
-        setData(res.data);
+        setData(res.data.results);
         setLoading(false);
       })
       .catch((err) => {
@@ -120,50 +54,26 @@ const UserDataTable = () => {
       });
   };
 
-  // useEffect(() => {
-  //   getUserList();
-  // }, []);
+  const handleUserDelete = (id) => {
+    setLoading(true);
+    instance
+      .patch(`/admin/users/${id}/`, {
+        is_deleted: true,
+      })
+      .then((res) => {
+        setLoading(false);
+        console.log("res", res);
+        getUserList();
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log("err", err);
+      });
+  };
 
-  const columns = [
-    {
-      headerName: "User Name",
-      field: "userName",
-    },
-    {
-      headerName: "Phone Number",
-      field: "phoneNumber",
-    },
-    {
-      headerName: "Bank Name",
-      field: "bankName",
-      width: 200,
-    },
-    {
-      headerName: "Branch",
-      field: "branch",
-    },
-    {
-      headerName: "Account Number",
-      field: "accountNumber",
-    },
-    {
-      headerName: "Actions",
-      field: "action",
-      width: 80,
-      cellRenderer: (params) => {
-        return (
-          <div className="flex flex-row group justify-center items-center h-full gap-x-2">
-            <button className="text-red-400 group-hover:text-red-400/80">
-              <FiTrash2 size={20} />
-            </button>
-            <button className="text-black/60 group-hover:text-black/80">
-              <IoPencilSharp size={20} />
-            </button>
-          </div>
-        );
-      },
-    },
-  ];
+  useEffect(() => {
+    getUserList();
+  }, []);
 
   if (loading) {
     return (
@@ -176,9 +86,72 @@ const UserDataTable = () => {
 
   return (
     <div
-      className="ag-theme-quartz flex flex-col  h-[70vh] overflow-y-scroll" // applying the grid theme
+      className=" flex flex-col w-full h-[70vh]" // applying the grid theme
     >
-      <AgGridReact rowData={data} columnDefs={columns} />
+      {data.length > 0 ? (
+        <div className=" flex flex-col items-start w-full h-full overflow-y-scroll ">
+          {data.map((user, index) => {
+            return (
+              <div className=" w-full px-2 py-2 border-[0.5px] border-[#c7c7c7] rounded-md flex flex-row justify-between  mb-2">
+                <div className=" flex flex-row justify-start gap-x-4 w-[20%]">
+                  <div className=" p-4 rounded-md bg-gray-300">
+                    <FaRegUser className=" text-xl text-gray-700" />
+                  </div>
+
+                  <div className=" flex flex-col items-start justify-center">
+                    <p className=" text-base text-black font-semibold">
+                      {user.name}{" "}
+                      {user.is_superuser ? (
+                        <span
+                          className={" bg-gray-200 px-2 rounded-xl text-[10px]"}
+                        >
+                          Admin
+                        </span>
+                      ) : null}
+                    </p>
+                    <p className=" text-sm text-black">{user.email}</p>
+                  </div>
+                </div>
+
+                <div className=" flex flex-col items-start justify-center w-[10%]">
+                  <p className=" text-xs text-black/40">Phone Number</p>
+                  <p className=" text-sm text-black">{user.phone_number}</p>
+                </div>
+                <div className=" flex flex-col items-start justify-center w-[10%]">
+                  <p className=" text-xs text-black/40">Phone Number</p>
+                  <p className=" text-sm text-black">{user.email}</p>
+                </div>
+
+                <div className=" flex flex-row gap-x-2 w-[10%] items-center justify-center">
+                  <button
+                    onClick={() => {
+                      setShowUserDetailsModal({
+                        show: true,
+                        id: user.id,
+                      });
+                    }}
+                  >
+                    <LuEye className=" text-xl text-black" />
+                  </button>
+
+                  <ConfirmDeleteModal
+                    type="icon"
+                    onConfirm={() => {
+                      handleUserDelete(user.id);
+                    }}
+                    title={user.name}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className=" flex flex-col items-center justify-center w-full h-[40vh] ">
+          <GoInbox className=" text-4xl text-black" />
+          <p className=" text-base text-black">No User Data Found</p>
+        </div>
+      )}
     </div>
   );
 };

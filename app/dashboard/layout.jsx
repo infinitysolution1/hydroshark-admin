@@ -2,6 +2,7 @@ import React from "react";
 import AdminNavbar from "@/components/AdminNavbar";
 import Sidebar from "@/components/Sidebar";
 import CreateProductModal from "@/components/Modals/CreateProductModal";
+import ViewUserDetailsModal from "@/components/Modals/ViewUserDetailsModal";
 
 export const metadata = {
   title: "Dashboard | Hydroshark",
@@ -19,6 +20,7 @@ const Layout = ({ children }) => {
         <div className=" flex flex-col w-[80vw]">{children}</div>
       </div>
       <CreateProductModal />
+      <ViewUserDetailsModal />
     </main>
   );
 };
