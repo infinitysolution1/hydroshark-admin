@@ -54,7 +54,7 @@ const ProductDataTable = () => {
   if (loading) {
     return (
       <div className="flex flex-col h-[60vh] w-full justify-center items-center">
-        <Spinner loading={loading} />
+        <Spinner loading={loading} size={40} color={"#000000"} />
         <p className="text-base mt-2 text-black">Loading Product Data</p>
       </div>
     );
@@ -83,24 +83,24 @@ const ProductDataTable = () => {
               <button
                 onClick={() => {
                   setShowCreateProductModal({
+                    ...showCreateProductModal,
                     show: true,
                     id: product.id,
                     mode: "edit",
+                    refresh: !showCreateProductModal.refresh,
                   });
                 }}
                 className="text-black py-2 rounded-md"
               >
                 <MdEdit className="text-xl" />
               </button>
-              <button className="text-red-400 py-2 rounded-md">
-                <ConfirmDeleteModal
-                  type="icon"
-                  onConfirm={() => {
-                    deleteProduct(product.id);
-                  }}
-                  title={product.product_title}
-                />
-              </button>
+              <ConfirmDeleteModal
+                type="icon"
+                onConfirm={() => {
+                  deleteProduct(product.id);
+                }}
+                title={product.product_title}
+              />
             </div>
           </div>
         );

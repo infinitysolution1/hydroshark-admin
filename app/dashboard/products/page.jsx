@@ -13,7 +13,13 @@ const Products = () => {
 
         <button
           onClick={() => {
-            setShowCreateProductModal({ show: true, id: "", mode: "create" });
+            setShowCreateProductModal({
+              ...showCreateProductModal,
+              show: true,
+              id: "",
+              mode: "create",
+              refresh: !showCreateProductModal.refresh,
+            });
           }}
           className="bg-black text-white px-4 py-2 rounded-md"
         >
