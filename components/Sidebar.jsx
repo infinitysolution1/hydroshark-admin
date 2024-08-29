@@ -26,7 +26,7 @@ const options = [
     icon: () => <MdOutlineViewList className=" text-black text-xl" />,
   },
   {
-    title: "Active Carts",
+    title: "Abandoned Carts",
     path: "/dashboard/carts",
     icon: () => <MdAddShoppingCart className=" text-black text-xl" />,
   },

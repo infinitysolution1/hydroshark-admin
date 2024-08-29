@@ -7,14 +7,14 @@ const override = {
   borderColor: "red",
 };
 
-function Spinner({ loading }) {
+function Spinner({ loading, size, color }) {
   return (
     <div className="">
       <PuffLoader
-        color={"#000000"}
+        color={color}
         loading={loading}
         cssOverride={override}
-        size={40}
+        size={size}
         aria-label="Loading Spinner"
         data-testid="loader"
       />
