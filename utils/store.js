@@ -28,6 +28,13 @@ const useStore = create((set) => ({
   },
   setShowOrderDetailsModal: (showOrderDetailsModal) =>
     set({ showOrderDetailsModal }),
+
+  showCartDetailsModal: {
+    show: false,
+    id: "",
+  },
+  setShowCartDetailsModal: (showCartDetailsModal) =>
+    set({ showCartDetailsModal }),
 }));
 
 export default useStore;
