@@ -4,6 +4,7 @@ import Sidebar from "@/components/Sidebar";
 import CreateProductModal from "@/components/Modals/CreateProductModal";
 import ViewUserDetailsModal from "@/components/Modals/ViewUserDetailsModal";
 import ViewOrderDetailsModal from "@/components/Modals/ViewOrderDetailsModal";
+import ViewCartDetailsModal from "@/components/Modals/ViewCartDetailsModal";
 
 export const metadata = {
   title: "Dashboard | Hydroshark",
@@ -23,6 +24,7 @@ const Layout = ({ children }) => {
       <CreateProductModal />
       <ViewUserDetailsModal />
       <ViewOrderDetailsModal />
+      <ViewCartDetailsModal />
     </main>
   );
 };
