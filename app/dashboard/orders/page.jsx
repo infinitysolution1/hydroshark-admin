@@ -52,8 +52,11 @@ const Orders = () => {
       <div className="w-full flex flex-col h-[75vh] overflow-y-scroll mt-4">
         {orders.length > 0 ? (
           <div className=" flex flex-col w-full items-start">
-            {orders.map((order) => (
-              <div className=" flex flex-row justify-between items-center w-full border-[1px] border-[#c7c7c7] px-4 py-2 rounded-md mb-2">
+            {orders.map((order, index) => (
+              <div
+                key={index}
+                className=" flex flex-row justify-between items-center w-full border-[1px] border-[#c7c7c7] px-4 py-2 rounded-md mb-2"
+              >
                 <div className=" flex flex-col items-start">
                   <p className=" text-xs text-black/70">Order ID</p>
                   <p className=" text-base text-black">{`Order# ${order.id}`}</p>

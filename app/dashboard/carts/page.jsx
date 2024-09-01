@@ -48,9 +48,12 @@ const Carts = () => {
       <div className="w-full flex flex-col max-h-[80vh] mt-4">
         {carts.length > 0 ? (
           <div className=" flex flex-col items-start w-full">
-            {carts.map((cart) => {
+            {carts.map((cart, index) => {
               return (
-                <div className=" w-full flex flex-row justify-between items-center  border-[1px] border-[#c7c7c7] px-4 py-2 rounded-md mb-2">
+                <div
+                  key={index}
+                  className=" w-full flex flex-row justify-between items-center  border-[1px] border-[#c7c7c7] px-4 py-2 rounded-md mb-2"
+                >
                   <div className=" flex flex-col items-start">
                     <p className=" text-xs text-black/70">
                       Net Discount Percentage

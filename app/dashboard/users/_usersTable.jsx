@@ -92,7 +92,10 @@ const UserDataTable = () => {
         <div className=" flex flex-col items-start w-full h-full overflow-y-scroll ">
           {data.map((user, index) => {
             return (
-              <div className=" w-full px-2 py-2 border-[0.5px] border-[#c7c7c7] rounded-md flex flex-row justify-between  mb-2">
+              <div
+                key={index}
+                className=" w-full px-2 py-2 border-[0.5px] border-[#c7c7c7] rounded-md flex flex-row justify-between  mb-2"
+              >
                 <div className=" flex flex-row justify-start gap-x-4 w-[20%]">
                   <div className=" p-4 rounded-md bg-gray-300">
                     <FaRegUser className=" text-xl text-gray-700" />
