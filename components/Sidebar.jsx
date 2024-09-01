@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { MdOutlineGroups3 } from "react-icons/md";
@@ -13,51 +13,72 @@ const options = [
   {
     title: "Dashboard",
     path: "/dashboard",
-    icon: () => <MdOutlineSpaceDashboard className=" text-black text-xl" />,
+    icon: (addedClass) => <MdOutlineSpaceDashboard className={addedClass} />,
   },
   {
     title: "Users",
     path: "/dashboard/users",
-    icon: () => <MdOutlineGroups3 className=" text-black text-xl" />,
+    icon: (addedClass) => <MdOutlineGroups3 className={addedClass} />,
   },
   {
     title: "Products",
     path: "/dashboard/products",
-    icon: () => <MdOutlineViewList className=" text-black text-xl" />,
+    icon: (addedClass) => <MdOutlineViewList className={addedClass} />,
   },
   {
     title: "Abandoned Carts",
     path: "/dashboard/carts",
-    icon: () => <MdAddShoppingCart className=" text-black text-xl" />,
+    icon: (addedClass) => <MdAddShoppingCart className={addedClass} />,
   },
   {
     title: "Orders",
     path: "/dashboard/orders",
-    icon: () => <MdCheckCircleOutline className=" text-black text-xl" />,
+    icon: (addedClass) => <MdCheckCircleOutline className={addedClass} />,
   },
   {
     title: "Banner",
     path: "/dashboard/banner",
-    icon: () => <PiFlagBanner className=" text-black text-xl" />,
+    icon: (addedClass) => <PiFlagBanner className={addedClass} />,
   },
   {
     title: "Feedback",
     path: "/dashboard/feedback",
-    icon: () => <MdOutlineMessage className=" text-black text-xl" />,
+    icon: (addedClass) => <MdOutlineMessage className={addedClass} />,
   },
 ];
 
 const Sidebar = () => {
+  const pathname = usePathname();
+  const [active, setActive] = useState("");
+
+  useEffect(() => {
+    setActive(pathname);
+  }, [pathname]);
+
   return (
     <div className=" flex flex-col items-start p-4 w-full h-full ">
       {options.map((option) => (
         <a
           key={option.title}
           href={option.path}
-          className="flex flex-row items-center gap-x-4 p-2 w-full cursor-pointer"
+          className={`flex flex-row items-center ${
+            active == option.path ? "bg-black" : "bg-white"
+          } gap-x-4 rounded-md py-2 px-4 w-full cursor-pointer`}
         >
-          <option.icon />
-          <p className=" text-black text-base mt-1">{option.title}</p>
+          <option.icon
+            addedClass={
+              active == option.path
+                ? "text-white text-xl"
+                : "text-black text-xl"
+            }
+          />
+          <p
+            className={` ${
+              active != option.path ? "text-black" : "text-white"
+            } text-black text-base mt-1`}
+          >
+            {option.title}
+          </p>
         </a>
       ))}
     </div>
