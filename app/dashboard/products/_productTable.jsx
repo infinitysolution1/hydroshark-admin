@@ -8,14 +8,16 @@ import { MdEdit, MdDelete } from "react-icons/md";
 import useStore from "@/utils/store";
 import ConfirmDeleteModal from "@/components/Modals/ConfirmDeleteModal";
 import { IoFlash } from "react-icons/io5";
-import { set } from "react-hook-form";
+import Pagination from "@/components/Pagination";
 
 // Rest of the code...
 
 const ProductDataTable = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const { showCreateProductModal, setShowCreateProductModal } = useStore();
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   const getProducts = () => {
     setLoading(true);
@@ -49,7 +51,7 @@ const ProductDataTable = () => {
 
   useEffect(() => {
     getProducts();
-  }, []);
+  }, [page]);
 
   if (loading) {
     return (
@@ -61,50 +63,72 @@ const ProductDataTable = () => {
   }
 
   return (
-    <div className="ag-theme-quartz flex flex-col  h-[70vh] overflow-y-scroll">
-      {data.map((product) => {
-        return (
-          <div
-            key={product.id}
-            className="flex flex-row justify-between w-full items-center border-[0.5px] border-black/50 text-black p-4 rounded-md mb-4"
-          >
-            <div className=" flex flex-row justify-start items-center">
-              <div className=" h-[5vh] w-[5vh] relative bg-gray-200 flex justify-center items-center rounded-md">
-                <IoFlash className=" text-black" />
-              </div>
-              <div className="flex w-10/12 flex-col items-start ml-4">
-                <p className="text-xl text-black">{product.product_title}</p>
-                <p className=" text-sm text-black/70">
-                  {product.product_description}
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-row justify-end items-center gap-x-2">
-              <button
-                onClick={() => {
-                  setShowCreateProductModal({
-                    ...showCreateProductModal,
-                    show: true,
-                    id: product.id,
-                    mode: "edit",
-                    refresh: !showCreateProductModal.refresh,
-                  });
-                }}
-                className="text-black py-2 rounded-md"
-              >
-                <MdEdit className="text-xl" />
-              </button>
-              <ConfirmDeleteModal
-                type="icon"
-                onConfirm={() => {
-                  deleteProduct(product.id);
-                }}
-                title={product.product_title}
-              />
-            </div>
+    <div
+      className=" flex flex-col w-full h-[80vh]" // applying the grid theme
+    >
+      {data.length > 0 ? (
+        <div className=" flex flex-col items-end w-full">
+          <div className="ag-theme-quartz flex flex-col  h-[70vh] overflow-y-scroll">
+            {data.map((product) => {
+              return (
+                <div
+                  key={product.id}
+                  className="flex flex-row justify-between w-full items-center border-[0.5px] border-black/50 text-black p-4 rounded-md mb-4"
+                >
+                  <div className=" flex flex-row justify-start items-center">
+                    <div className=" h-[5vh] w-[5vh] relative bg-gray-200 flex justify-center items-center rounded-md">
+                      <IoFlash className=" text-black" />
+                    </div>
+                    <div className="flex w-10/12 flex-col items-start ml-4">
+                      <p className="text-xl text-black">
+                        {product.product_title}
+                      </p>
+                      <p className=" text-sm text-black/70">
+                        {product.product_description}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-row justify-end items-center gap-x-2">
+                    <button
+                      onClick={() => {
+                        setShowCreateProductModal({
+                          ...showCreateProductModal,
+                          show: true,
+                          id: product.id,
+                          mode: "edit",
+                          refresh: !showCreateProductModal.refresh,
+                        });
+                      }}
+                      className="text-black py-2 rounded-md"
+                    >
+                      <MdEdit className="text-xl" />
+                    </button>
+                    <ConfirmDeleteModal
+                      type="icon"
+                      onConfirm={() => {
+                        deleteProduct(product.id);
+                      }}
+                      title={product.product_title}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        );
-      })}
+          {totalPages > 0 ? (
+            <Pagination
+              count={totalPages}
+              page={page}
+              onChange={(val) => setPage(val)}
+            />
+          ) : null}
+        </div>
+      ) : (
+        <div className=" flex flex-col items-center justify-center w-full h-[40vh] ">
+          <GoInbox className=" text-4xl text-black" />
+          <p className=" text-base text-black">No Product Data Found</p>
+        </div>
+      )}
     </div>
   );
 };

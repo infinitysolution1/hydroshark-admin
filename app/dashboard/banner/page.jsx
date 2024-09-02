@@ -175,21 +175,21 @@ const Banner = () => {
             <p className="text-base mt-2 text-black">Loading Banner Data</p>
           </div>
         ) : activeBanners.length > 0 ? (
-          <div className=" rounded-lg w-full bg-gray-100 max-h-[40vh] overflow-y-scroll mt-2">
-            <div className="flex flex-col gap-y-4">
+          <div className=" rounded-lg w-full  max-h-[40vh] overflow-y-scroll  mt-2">
+            <div className="flex flex-col gap-y-2">
               {activeBanners.map((option, index) => (
                 <div
                   key={index}
-                  className="flex flex-row justify-between items-center border-[1px] overflow-hidden border-black text-black p-2 rounded-md"
+                  className="flex flex-row justify-between bg-gray-100 items-center border-[1px] overflow-hidden border-black text-black p-1 rounded-md"
                 >
                   <div className=" flex flex-col items-start">
-                    <p className=" text-sm text-black/60">Title</p>
-                    <p>{option.title}</p>
+                    <p className=" text-xs text-black/60">Title</p>
+                    <p className=" text-sm text-black">{option.title}</p>
                   </div>
                   <div className=" flex flex-row justify-end items-center gap-x-2">
                     <div className=" flex flex-col items-start">
-                      <p className=" text-sm text-black/60">End Date</p>
-                      <p className=" text-base mr-4">
+                      <p className=" text-xs text-black/60">End Date</p>
+                      <p className=" text-sm mr-4">
                         {" "}
                         {dayjs(option.end_date).format("DD/MM/YY")}
                       </p>
@@ -222,27 +222,27 @@ const Banner = () => {
         <div className="w-full flex flex-col max-h-[70vh] mt-8 ">
           <p className=" text-2xl font-semibold text-black">Past Banners</p>
 
-          <div className=" rounded-lg w-full bg-gray-100 mt-2">
+          <div className=" rounded-lg w-full  mt-2">
             {loading ? (
               <div className="flex flex-col h-[20vh] w-full justify-center items-center">
                 <Spinner loading={loading} />
                 <p className="text-base mt-2 text-black">Loading Banner Data</p>
               </div>
             ) : pastBanners.length > 0 ? (
-              <div className="flex flex-col gap-y-4 max-h-[30vh] overflow-y-scroll">
+              <div className="flex flex-col gap-y-2 max-h-[30vh] overflow-y-scroll">
                 {pastBanners.map((option, index) => (
                   <div
                     key={index}
-                    className="flex flex-row justify-between opacity-6s0 items-center border-[1px] border-black text-black p-2 rounded-md"
+                    className="flex flex-row justify-between bg-gray-100 opacity-60 items-center border-[1px] border-black text-black p-1 rounded-md"
                   >
                     <div className=" flex flex-col items-start">
-                      <p className=" text-sm text-black/60">Title</p>
-                      <p>{option.title}</p>
+                      <p className=" text-xs text-black/60">Title</p>
+                      <p className=" text-black text-sm">{option.title}</p>
                     </div>
                     <div className=" flex flex-row justify-end items-center gap-x-2">
                       <div className=" flex flex-col items-start">
-                        <p className=" text-sm text-black/60">End Date</p>
-                        <p className=" text-base mr-4">
+                        <p className=" text-xs text-black/60">End Date</p>
+                        <p className=" text-sm mr-4">
                           {dayjs(option.end_date).format("DD/MM/YY")}
                         </p>
                       </div>

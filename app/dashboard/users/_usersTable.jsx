@@ -10,6 +10,7 @@ import { LuEye } from "react-icons/lu";
 import { MdEdit, MdDelete } from "react-icons/md";
 import ConfirmDeleteModal from "@/components/Modals/ConfirmDeleteModal";
 import useStore from "@/utils/store";
+import Pagination from "@/components/Pagination";
 
 // const user = [
 //   {
@@ -35,16 +36,19 @@ import useStore from "@/utils/store";
 // ];
 
 const UserDataTable = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const { showUserDetailsModal, setShowUserDetailsModal } = useStore();
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   const getUserList = () => {
     setLoading(true);
     instance
-      .get("/admin/users/")
+      .get(`/admin/users/?page=${page}`)
       .then((res) => {
-        console.log("res", res);
+        console.log("res", res.data, res.data.count / 10);
+        setTotalPages(Math.floor(res.data.count / 10));
         setData(res.data.results);
         setLoading(false);
       })
@@ -73,7 +77,7 @@ const UserDataTable = () => {
 
   useEffect(() => {
     getUserList();
-  }, []);
+  }, [page]);
 
   if (loading) {
     return (
@@ -86,68 +90,79 @@ const UserDataTable = () => {
 
   return (
     <div
-      className=" flex flex-col w-full h-[70vh]" // applying the grid theme
+      className=" flex flex-col w-full h-[80vh]" // applying the grid theme
     >
       {data.length > 0 ? (
-        <div className=" flex flex-col items-start w-full h-full overflow-y-scroll ">
-          {data.map((user, index) => {
-            return (
-              <div
-                key={index}
-                className=" w-full px-2 py-2 border-[0.5px] border-[#c7c7c7] rounded-md flex flex-row justify-between  mb-2"
-              >
-                <div className=" flex flex-row justify-start gap-x-4 w-[20%]">
-                  <div className=" p-4 rounded-md bg-gray-300">
-                    <FaRegUser className=" text-xl text-gray-700" />
+        <div className=" flex flex-col items-end w-full">
+          <div className=" flex flex-col items-start w-full h-[75vh] overflow-y-scroll ">
+            {data.map((user, index) => {
+              return (
+                <div
+                  key={index}
+                  className=" w-full p-1 border-[0.5px] border-[#c7c7c7] rounded-md flex flex-row justify-between  mb-2"
+                >
+                  <div className=" flex flex-row justify-start gap-x-4 w-[20%]">
+                    <div className=" p-3 rounded-md bg-gray-300">
+                      <FaRegUser className=" text-xl text-gray-700" />
+                    </div>
+
+                    <div className=" flex flex-col items-start justify-center">
+                      <p className=" text-sm text-black font-semibold">
+                        {user.name}{" "}
+                        {user.is_superuser ? (
+                          <span
+                            className={
+                              " bg-gray-200 px-2 rounded-xl text-[10px]"
+                            }
+                          >
+                            Admin
+                          </span>
+                        ) : null}
+                      </p>
+                      <p className=" text-xs text-black">{user.email}</p>
+                    </div>
                   </div>
 
-                  <div className=" flex flex-col items-start justify-center">
-                    <p className=" text-base text-black font-semibold">
-                      {user.name}{" "}
-                      {user.is_superuser ? (
-                        <span
-                          className={" bg-gray-200 px-2 rounded-xl text-[10px]"}
-                        >
-                          Admin
-                        </span>
-                      ) : null}
-                    </p>
+                  <div className=" flex flex-col items-start justify-center w-[10%]">
+                    <p className=" text-xs text-black/40">Phone Number</p>
+                    <p className=" text-sm text-black">{user.phone_number}</p>
+                  </div>
+                  <div className=" flex flex-col items-start justify-center w-[10%]">
+                    <p className=" text-xs text-black/40">Phone Number</p>
                     <p className=" text-sm text-black">{user.email}</p>
                   </div>
-                </div>
 
-                <div className=" flex flex-col items-start justify-center w-[10%]">
-                  <p className=" text-xs text-black/40">Phone Number</p>
-                  <p className=" text-sm text-black">{user.phone_number}</p>
-                </div>
-                <div className=" flex flex-col items-start justify-center w-[10%]">
-                  <p className=" text-xs text-black/40">Phone Number</p>
-                  <p className=" text-sm text-black">{user.email}</p>
-                </div>
+                  <div className=" flex flex-row gap-x-2 w-[10%] items-center justify-center">
+                    <button
+                      onClick={() => {
+                        setShowUserDetailsModal({
+                          show: true,
+                          id: user.id,
+                        });
+                      }}
+                    >
+                      <LuEye className=" text-xl text-black" />
+                    </button>
 
-                <div className=" flex flex-row gap-x-2 w-[10%] items-center justify-center">
-                  <button
-                    onClick={() => {
-                      setShowUserDetailsModal({
-                        show: true,
-                        id: user.id,
-                      });
-                    }}
-                  >
-                    <LuEye className=" text-xl text-black" />
-                  </button>
-
-                  <ConfirmDeleteModal
-                    type="icon"
-                    onConfirm={() => {
-                      handleUserDelete(user.id);
-                    }}
-                    title={user.name}
-                  />
+                    <ConfirmDeleteModal
+                      type="icon"
+                      onConfirm={() => {
+                        handleUserDelete(user.id);
+                      }}
+                      title={user.name}
+                    />
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+          {totalPages > 0 ? (
+            <Pagination
+              count={totalPages}
+              page={page}
+              onChange={(val) => setPage(val)}
+            />
+          ) : null}
         </div>
       ) : (
         <div className=" flex flex-col items-center justify-center w-full h-[40vh] ">
