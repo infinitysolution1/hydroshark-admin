@@ -4,6 +4,7 @@ import useStore from "@/utils/store";
 import { IoMdClose } from "react-icons/io";
 import { MdOutlineFileUpload } from "react-icons/md";
 import instance from "@/utils/instance";
+import { PiCoinsFill } from "react-icons/pi";
 import Spinner from "../Spinner";
 
 const labelClass = "text-black text-sm ";
@@ -19,10 +20,6 @@ const sections = [
     title: "Wallet Details",
     value: "wallet",
   },
-  {
-    title: "Order Details",
-    value: "order",
-  },
 ];
 
 const ViewUserDetailsModal = () => {
@@ -34,10 +31,10 @@ const ViewUserDetailsModal = () => {
   const [walletData, setWalletData] = useState({});
   const [activeTab, setActiveTab] = useState("address");
 
-  const ViewUserDetailsModal = (id) => {
+  const getWalletDetails = (id) => {
     setLoading(true);
     instance
-      .get(`/rewards/wallet/${id}/`)
+      .get(`/admin/wallets/${id}/`)
       .then((res) => {
         setWalletData(res.data);
         console.log("wallet data");
@@ -55,7 +52,7 @@ const ViewUserDetailsModal = () => {
   const getAddressDetails = (id) => {
     setLoading(true);
     instance
-      .get("/accounts/address/" + id + "/")
+      .get("/admin/addresses/" + id + "/")
       .then((res) => {
         setAddressList(res.data);
         setLoading(false);
@@ -87,8 +84,8 @@ const ViewUserDetailsModal = () => {
     setIsOpen(showUserDetailsModal.show);
     if (showUserDetailsModal.show) {
       getUserDetails(showUserDetailsModal.id);
-      //   getWalletDetails(showUserDetailsModal.id);
-      //   getAddresses(showUserDetailsModal.id);
+      getWalletDetails(showUserDetailsModal.id);
+      getAddressDetails(showUserDetailsModal.id);
     }
   }, [showUserDetailsModal.show]);
 
@@ -173,23 +170,55 @@ const ViewUserDetailsModal = () => {
               </div>
             </div>
 
-            <div className="flex flex-row justify-start w-full mt-[3.5vh]">
-              {sections.map((section, index) => (
-                <button
-                  key={index}
-                  onClick={() => setActiveTab(section.value)}
-                  className={`${
-                    activeTab === section.value
-                      ? "bg-[#333] text-white"
-                      : "bg-white text-black border-[0.5px] border-[#181818]"
-                  } px-4 py-2 rounded-md mr-2`}
-                >
-                  {section.title}
-                </button>
-              ))}
+            <div className=" flex flex-row justify-between items-center w-full mt-[5vh]">
+              <div className=" flex flex-col items-start w-6/12">
+                <div className=" flex flex-row justify-start items-center">
+                  <PiCoinsFill className=" text-2xl text-black" />
+                  <h2 className=" text-black text-base lg:text-xl ml-2">
+                    HydroShark Coins
+                  </h2>
+                </div>
+                <p className=" text-black text-xs">
+                  {
+                    "(You can redeem HydrodShark coins by pucharsing HydroShark Gymwear)"
+                  }
+                </p>
+              </div>
+
+              <div className=" flex flex-col items-end w-1/2">
+                <div className=" flex flex-row w-3/12 justify-end items-center">
+                  <PiCoinsFill className=" text-2xl text-black" />
+                  <p className=" text-black text-lg mt-1">
+                    {walletData?.wallet_balance}
+                  </p>
+                </div>
+
+                <p className=" text-sm text-black">Available Coins</p>
+              </div>
             </div>
-            <div className=" flex flex-col w-full h-[25vh] relative justify-center items-center">
-              <p className=" text-black text-xl">No Data Found</p>
+            <div className=" flex flex-col items-start w-full mt-[5vh]">
+              <h2 className=" text-xl font-semibold text-black mb-4">
+                Address
+              </h2>
+              <div className=" w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {addressList.map((address, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="flex flex-row w-full justify-between bg-gray-100 p-4 rounded-lg "
+                    >
+                      <div className=" w-10/12 lg:w-9/12 flex flex-row text-sm flex-wrap items-start">
+                        <p className="  text-black">
+                          {address.address_line_1},
+                        </p>
+                        <p className=" text-black">{address.address_line_2},</p>
+                        <p className="  text-black">{` ${address.city}, ${address.state},`}</p>
+                        <p className="  text-black">{` ${address.country}, ${address.zipcode}`}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}

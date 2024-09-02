@@ -120,9 +120,9 @@ const ViewCartDetailsModal = () => {
 
   useEffect(() => {
     setIsOpen(showCartDetailsModal.show);
-    //   if (showCartDetailsModal.show) {
-    //     getCartDetials(showCartDetailsModal.id);
-    //   }
+    if (showCartDetailsModal.show) {
+      getCartDetials(showCartDetailsModal.id);
+    }
   }, [showCartDetailsModal.show]);
 
   const handleModalClose = () => {
@@ -172,10 +172,10 @@ const ViewCartDetailsModal = () => {
                 </p>
               </div>
             </div>
-            <div className=" bg-gray-100  py-2 px-4 rounded-md flex mt-4 flex-col items-start w-full">
+            <div className="   py-2 rounded-md flex mt-4 flex-col items-start w-full">
               <p className=" text-base text-black font-semibold">Cart Items</p>
               {cartDetails.cart_items?.length > 0 ? (
-                <div className=" flex flex-col items-start w-full">
+                <div className=" flex flex-col items-start w-full mt-4 max-h-[40] overflow-y-scroll">
                   {cartDetails.cart_items.map((item, index) => (
                     <div
                       key={index}
@@ -197,6 +197,34 @@ const ViewCartDetailsModal = () => {
                           {item.product_section?.linked_product?.product_title}
                         </p>
                       </div>
+                      <div className=" flex flex-col items-start">
+                        <p className=" text-xs text-black/70">
+                          Product Section
+                        </p>
+                        <p className=" text-sm text-black">
+                          {item.product_section?.section_title}
+                        </p>
+                      </div>
+                      <div className=" flex flex-col items-start">
+                        <p className=" text-xs text-black/70">
+                          Product Section
+                        </p>
+                        <p className=" text-sm text-black">
+                          {item.product_section?.section_title}
+                        </p>
+                      </div>
+                      <div className=" flex flex-col items-start">
+                        <p className=" text-xs text-black/70">
+                          Product Quantity
+                        </p>
+                        <p className=" text-sm text-black">{item.quantity}</p>
+                      </div>
+                      <div className=" flex flex-col items-start">
+                        <p className=" text-xs text-black/70">Product Total</p>
+                        <p className=" text-sm text-black">
+                          {item.total_price}
+                        </p>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -211,46 +239,33 @@ const ViewCartDetailsModal = () => {
 
               <div className=" w-full mt-4 flex flex-col items-start">
                 <div className="w-full mt-4 flex flex-row items-center justify-between">
-                  <p className="text-xs text-black/70">Shipping Charges</p>
+                  <p className="text-xs text-black/70">Cart Total Amount</p>
                   <p className="text-sm text-black">
-                    {cartDetails?.shipping_charges || "N/A"}
-                  </p>
-                </div>
-                <div className="w-full mt-4 flex flex-row items-center justify-between">
-                  <p className="text-xs text-black/70">Shipping Discount</p>
-                  <p className="text-sm text-black">
-                    {cartDetails?.shipping_discount || "N/A"}
+                    {cartDetails.cart_total_price || "N/A"}
                   </p>
                 </div>
                 <div className="w-full mt-4 flex flex-row items-center justify-between">
                   <p className="text-xs text-black/70">Cart Discount</p>
                   <p className="text-sm text-black">
-                    {cartDetails.order_discount || "N/A"}
+                    {cartDetails.cart_net_discount_percentage || "N/A"}
                   </p>
                 </div>
                 <div className="w-full mt-4 flex flex-row items-center justify-between">
                   <p className="text-xs text-black/70">Cart Final Amount</p>
                   <p className="text-sm text-black">
-                    {cartDetails.order_final_amount || "N/A"}
-                  </p>
-                </div>
-
-                <div className="w-full mt-4 flex flex-row items-center justify-between">
-                  <p className="text-xs text-black/70">Cart Sub Total</p>
-                  <p className="text-sm text-black">
-                    {cartDetails.order_sub_total || "N/A"}
+                    {cartDetails.cart_final_amount || "N/A"}
                   </p>
                 </div>
                 <div className="w-full mt-4 flex flex-row items-center justify-between">
-                  <p className="text-xs text-black/70">Cart Total Amount</p>
+                  <p className="text-xs text-black/70">Hydroshark Coins</p>
                   <p className="text-sm text-black">
-                    {cartDetails.order_total_amount || "N/A"}
+                    {cartDetails.cart_total_hydroshark_coins || "N/A"}
                   </p>
                 </div>
                 <div className="w-full mt-4 flex flex-row items-center justify-between">
                   <p className="text-xs text-black/70">Cart Status</p>
                   <p className="text-sm text-black">
-                    {cartDetails.order_status || "N/A"}
+                    {cartDetails.cart_status || "N/A"}
                   </p>
                 </div>
               </div>

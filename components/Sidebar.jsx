@@ -13,37 +13,72 @@ const options = [
   {
     title: "Dashboard",
     path: "/dashboard",
-    icon: (addedClass) => <MdOutlineSpaceDashboard className={addedClass} />,
+    icon: ({ addedClass }) =>
+      addedClass ? (
+        <MdOutlineSpaceDashboard className={` text-2xl text-white`} />
+      ) : (
+        <MdOutlineSpaceDashboard className={` text-2xl text-black`} />
+      ),
   },
   {
     title: "Users",
     path: "/dashboard/users",
-    icon: (addedClass) => <MdOutlineGroups3 className={addedClass} />,
+    icon: ({ addedClass }) =>
+      addedClass ? (
+        <MdOutlineGroups3 className={` text-2xl text-white`} />
+      ) : (
+        <MdOutlineGroups3 className={` text-2xl text-black`} />
+      ),
   },
   {
     title: "Products",
     path: "/dashboard/products",
-    icon: (addedClass) => <MdOutlineViewList className={addedClass} />,
+    icon: ({ addedClass }) =>
+      addedClass ? (
+        <MdOutlineViewList className={` text-2xl text-white`} />
+      ) : (
+        <MdOutlineViewList className={` text-2xl text-black`} />
+      ),
   },
   {
     title: "Abandoned Carts",
     path: "/dashboard/carts",
-    icon: (addedClass) => <MdAddShoppingCart className={addedClass} />,
+    icon: ({ addedClass }) =>
+      addedClass ? (
+        <MdAddShoppingCart className={` text-2xl text-white`} />
+      ) : (
+        <MdAddShoppingCart className={` text-2xl text-black`} />
+      ),
   },
   {
     title: "Orders",
     path: "/dashboard/orders",
-    icon: (addedClass) => <MdCheckCircleOutline className={addedClass} />,
+    icon: ({ addedClass }) =>
+      addedClass ? (
+        <MdCheckCircleOutline className={`text-2xl text-white`} />
+      ) : (
+        <MdCheckCircleOutline className={`text-2xl text-black`} />
+      ),
   },
   {
     title: "Banner",
     path: "/dashboard/banner",
-    icon: (addedClass) => <PiFlagBanner className={addedClass} />,
+    icon: ({ addedClass }) =>
+      addedClass ? (
+        <PiFlagBanner className={`text-2xl text-white`} />
+      ) : (
+        <PiFlagBanner className={`text-2xl text-black`} />
+      ),
   },
   {
     title: "Feedback",
     path: "/dashboard/feedback",
-    icon: (addedClass) => <MdOutlineMessage className={addedClass} />,
+    icon: ({ addedClass }) =>
+      addedClass ? (
+        <MdOutlineMessage className={` text-2xl text-white`} />
+      ) : (
+        <MdOutlineMessage className={` text-2xl text-black`} />
+      ),
   },
 ];
 
@@ -65,13 +100,7 @@ const Sidebar = () => {
             active == option.path ? "bg-black" : "bg-white"
           } gap-x-4 rounded-md py-2 px-4 w-full cursor-pointer`}
         >
-          <option.icon
-            addedClass={
-              active == option.path
-                ? "text-white text-xl"
-                : "text-black text-xl"
-            }
-          />
+          <option.icon addedClass={active == option.path} />
           <p
             className={` ${
               active != option.path ? "text-black" : "text-white"
