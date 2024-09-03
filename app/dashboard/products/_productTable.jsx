@@ -51,7 +51,7 @@ const ProductDataTable = () => {
 
   useEffect(() => {
     getProducts();
-  }, [page]);
+  }, [page, showCreateProductModal.show]);
 
   if (loading) {
     return (

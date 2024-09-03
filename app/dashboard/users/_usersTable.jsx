@@ -48,7 +48,7 @@ const UserDataTable = () => {
       .get(`/admin/users/?page=${page}`)
       .then((res) => {
         console.log("res", res.data, res.data.count / 10);
-        setTotalPages(Math.floor(res.data.count / 10));
+        setTotalPages(Math.ceil(res.data.count / 10));
         setData(res.data.results);
         setLoading(false);
       })
