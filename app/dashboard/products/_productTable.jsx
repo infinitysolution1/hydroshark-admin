@@ -8,6 +8,7 @@ import { MdEdit, MdDelete } from "react-icons/md";
 import useStore from "@/utils/store";
 import ConfirmDeleteModal from "@/components/Modals/ConfirmDeleteModal";
 import { IoFlash } from "react-icons/io5";
+import { GoInbox } from "react-icons/go";
 import Pagination from "@/components/Pagination";
 
 // Rest of the code...

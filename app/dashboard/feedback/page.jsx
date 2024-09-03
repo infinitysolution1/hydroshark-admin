@@ -75,7 +75,10 @@ const Feedback = () => {
             <div className="w-full grid grid-cols-3 h-[75vh] overflow-y-scroll gap-8">
               {feedbacks.map((feedback, index) => {
                 return (
-                  <div className=" flex flex-col w-full p-4 rounded-md border-[1px] h-[20vh] border-[#c7c7c7]">
+                  <div
+                    key={index}
+                    className=" flex flex-col w-full p-4 rounded-md border-[1px] h-[20vh] border-[#c7c7c7]"
+                  >
                     <div className=" flex flex-row justify-between w-full">
                       <div className=" flex flex-row justify-start gap-x-4 items-center">
                         {Array(feedback.rating + 1)
