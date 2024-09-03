@@ -5,7 +5,6 @@ import { IoMdClose } from "react-icons/io";
 import { MdOutlineFileUpload } from "react-icons/md";
 import instance from "@/utils/instance";
 import { FaFileAlt } from "react-icons/fa";
-
 import Spinner from "../Spinner";
 import * as dayjs from "dayjs";
 dayjs().format();
@@ -19,6 +18,22 @@ const ViewOrderDetailsModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { showOrderDetailsModal, setShowOrderDetailsModal } = useStore();
   const [orderDetails, setOrderDetails] = useState({});
+  const [shippingDetails, setShippingDetails] = useState({});
+
+  const getShippingDetails = (id) => {
+    setLoading(true);
+    instance
+      .get(`/billing/shipping/track/${id}/`)
+      .then((res) => {
+        console.log("res", res.data);
+        setShippingDetails(res.data.data);
+        setLoading(false);
+      })
+      .then((err) => {
+        console.log("err", err);
+        setLoading(false);
+      });
+  };
 
   const getOrderDetials = (id) => {
     setLoading(true);
@@ -26,6 +41,11 @@ const ViewOrderDetailsModal = () => {
       .get(`/admin/orders/${id}/`)
       .then((res) => {
         setOrderDetails(res.data);
+        if (res.data.shipping?.id) {
+          getShippingDetails(id);
+        } else {
+          setShippingDetails({});
+        }
         setLoading(false);
       })
       .catch((err) => {
@@ -43,6 +63,8 @@ const ViewOrderDetailsModal = () => {
 
   const handleModalClose = () => {
     setShowOrderDetailsModal({ show: false, id: "" });
+    setOrderDetails({});
+    setShippingDetails({});
     setIsOpen(false);
   };
 
@@ -120,18 +142,90 @@ const ViewOrderDetailsModal = () => {
               <p className=" text-base text-black font-semibold">
                 Shipping Details
               </p>
-              <div className=" w-full mt-4 flex flex-col items-start">
-                <p className="text-xs text-black/70">Shipping Status</p>
-                <p className="text-sm text-black">
-                  {orderDetails.shipping?.shipping_status || "N/A"}
-                </p>
-              </div>
-              <div className=" w-full mt-4 flex flex-col items-start">
-                <p className="text-xs text-black/70">AWB Number</p>
-                <p className="text-sm text-black">
-                  {orderDetails.shipping?.awb_number || "N/A"}
-                </p>
-              </div>
+              {Object.keys(shippingDetails).length > 0 ? (
+                <div className=" flex flex-col items-start w-full">
+                  <div className=" w-full grid grid-cols-3">
+                    <div className=" w-full mt-4 flex flex-col items-start">
+                      <p className="text-xs text-black/70">Shipping Status</p>
+                      <p className="text-sm text-black">
+                        {shippingDetails?.status || "N/A"}
+                      </p>
+                    </div>
+                    <div className=" w-full mt-4 flex flex-col items-start">
+                      <p className="text-xs text-black/70">AWB Number</p>
+                      <p className="text-sm text-black">
+                        {shippingDetails?.awb_number || "N/A"}
+                      </p>
+                    </div>
+                    <div className=" w-full mt-4 flex flex-col items-start">
+                      <p className="text-xs text-black/70">Shipment Info</p>
+                      <p className="text-sm text-black">
+                        {shippingDetails?.awb_number || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col w-full items-start">
+                    {shippingDetails?.history?.length > 0 ? (
+                      <div className=" w-full mt-4 flex flex-col items-start">
+                        <p className="text-xs text-black/70">
+                          Shipment History
+                        </p>
+                        <div className=" w-full mt-2 flex flex-col items-start">
+                          <div className=" w-9/12 flex flex-row justify-between bg-black p-2 -ml-1  items-start">
+                            <p className="text-xs text-white w-1/2">Location</p>
+                            <p className="text-xs text-white w-1/4">
+                              Date and Time
+                            </p>
+                            <p className="text-xs text-white w-1/4">Message</p>
+                          </div>
+
+                          {shippingDetails?.history.map((history, index) => {
+                            return (
+                              <div
+                                key={index}
+                                className={`  w-9/12 flex flex-row justify-between ${
+                                  index % 2 == 0 ? "bg-white" : "bg-[#e4e3e3]"
+                                }  p-2 -ml-1  items-start`}
+                              >
+                                <p className="text-xs text-black w-1/2">
+                                  {history?.location}
+                                </p>
+                                <p className="text-xs text-black w-1/4">
+                                  {dayjs(history?.event_time).format(
+                                    "hh:MM A , DD/MM/YYYY "
+                                  )}
+                                </p>
+                                <p className="text-xs text-black w-1/4">
+                                  {history?.message}
+                                </p>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-black/80">
+                        Shipment History Not Available
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className=" w-full grid grid-cols-3">
+                  <div className=" w-full mt-4 flex flex-col items-start">
+                    <p className="text-xs text-black/70">Shipping Status</p>
+                    <p className="text-sm text-black">
+                      {orderDetails.shipping?.shipping_status || "N/A"}
+                    </p>
+                  </div>
+                  <div className=" w-full mt-4 flex flex-col items-start">
+                    <p className="text-xs text-black/70">AWB Number</p>
+                    <p className="text-sm text-black">
+                      {orderDetails.shipping?.awb_number || "N/A"}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className=" bg-gray-100  py-2 px-4 rounded-md flex mt-4 flex-col items-start w-full">

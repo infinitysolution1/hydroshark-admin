@@ -8,11 +8,6 @@ import Spinner from "../Spinner";
 import ProductSections from "../CreateProductSections/ProductSections";
 import ProductImages from "../CreateProductSections/ProductImages";
 
-const defaultValues = {
-  productName: "",
-  productDescription: "",
-};
-
 const productSections = [
   {
     title: " Product Details",
@@ -31,11 +26,26 @@ const productSections = [
   },
 ];
 
+const initialSections = [
+  {
+    title: " Product Details",
+    value: "productDetails",
+    disabled: false,
+  },
+];
+
+const defaultValues = {
+  productName: "",
+  productDescription: "",
+  hydroshark_points_accepted: false,
+};
+
 const labelClass = "text-black text-sm ";
 const inputClass =
   "border border-black rounded-md p-1 text-black focus:outline-none";
 
 const CreateProductModal = () => {
+  const [tabs, setTabs] = useState(initialSections);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [productSubSections, setProductSubSections] = useState([]);
@@ -71,6 +81,14 @@ const CreateProductModal = () => {
     setIsOpen(false);
   };
 
+  const onSubmit = (data) => {
+    if (showCreateProductModal.mode == "create") {
+      createProduct(data);
+    } else {
+      updateProduct(data);
+    }
+  };
+
   const getProducts = (id) => {
     setLoading(true);
     instance
@@ -82,6 +100,10 @@ const CreateProductModal = () => {
         setProductImages(res.data.product_images);
         setValue("productName", res.data.product_title);
         setValue("productDescription", res.data.product_description);
+        setValue(
+          "hydroshark_points_accepted",
+          res.data.hydroshark_points_accepted
+        );
       })
       .catch((err) => {
         console.log("err", err);
@@ -89,12 +111,30 @@ const CreateProductModal = () => {
       });
   };
 
-  const createProduct = () => {
+  const updateProduct = (data) => {
+    let obj = {
+      product_title: data.productName,
+      product_description: data.productDescription,
+      hydroshark_points_accepted: data.hydroshark_points_accepted,
+    };
+
+    instance
+      .patch(`/drinks/product/${showCreateProductModal.id}/`, obj)
+      .then((res) => {
+        console.log("res", res);
+        setActiveTab("productSections");
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
+
+  const createProduct = (data) => {
     setLoading(true);
     let obj = {
-      product_title: "Product #" + Math.floor(Math.random() * 1000),
-      product_description: "Product Description",
-      hydroshark_points_accepted: false,
+      product_title: data.productName,
+      product_description: data.productDescription,
+      hydroshark_points_accepted: data.hydroshark_points_accepted,
     };
 
     instance
@@ -103,6 +143,11 @@ const CreateProductModal = () => {
         console.log("res", res);
         setLoading(false);
         getProducts(res.data.id);
+        setShowCreateProductModal({
+          ...showCreateProductModal,
+          refresh: !showCreateProductModal.refresh,
+        });
+        setTabs(productSections);
       })
       .catch((err) => {
         console.log("err", err);
@@ -113,6 +158,7 @@ const CreateProductModal = () => {
   useEffect(() => {
     if (showCreateProductModal.mode == "edit") {
       getProducts(showCreateProductModal.id);
+      setTabs(productSections);
     }
   }, [showCreateProductModal.refresh]);
 
@@ -139,7 +185,7 @@ const CreateProductModal = () => {
               />
             </div>
             <div className="w-full flex flex-row justify-start items-center gap-x-4 mt-4 border-b-[0.5px] border-[#c7c7c7]">
-              {productSections.map((item, index) => {
+              {tabs.map((item, index) => {
                 return (
                   <button
                     key={index}
@@ -162,7 +208,10 @@ const CreateProductModal = () => {
             <div className=" w-full flex flex-col items-start">
               {activeTab == "productDetails" ? (
                 <div className=" flex flex-col items-start w-full">
-                  <form className="flex flex-col w-full mt-4">
+                  <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="flex flex-col w-full mt-4"
+                  >
                     <div className=" w-full grid grid-cols-2 gap-4">
                       <div className="flex flex-col w-full mt-2">
                         <label
@@ -203,25 +252,45 @@ const CreateProductModal = () => {
                         </p>
                       )}
                     </div>
+
+                    <div className="flex flex-col w-full mt-4">
+                      <div className=" flex flex-row justify-start gap-x-2">
+                        <input
+                          type={"checkbox"}
+                          {...register("hydroshark_points_accepted", {
+                            required: true,
+                          })}
+                        />
+                        <label
+                          className={`${labelClass}`}
+                          htmlFor="hydroshark_points_accepted"
+                        >
+                          Hydroshark Points Accepted
+                        </label>
+                      </div>
+                      {errors.hydroshark_points_accepted && (
+                        <p className="text-red-500">Field is required</p>
+                      )}
+                    </div>
+                    <div className=" flex flex-row justify-end w-full mt-8 gap-x-4">
+                      <button
+                        onClick={() => {
+                          handleModalClose();
+                        }}
+                        className="border-[1px]  border-red-400 text-red-400 bg-white px-4 py-2 rounded-md"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="bg-black text-white px-4 py-2 rounded-md"
+                      >
+                        {showCreateProductModal.mode == "create"
+                          ? "Create"
+                          : "Update"}
+                      </button>
+                    </div>
                   </form>
-                  <div className=" flex flex-row justify-end w-full mt-8 gap-x-4">
-                    <button
-                      onClick={() => {
-                        handleModalClose();
-                      }}
-                      className="border-[1px]  border-red-400 text-red-400 bg-white px-4 py-2 rounded-md"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="bg-black text-white px-4 py-2 rounded-md"
-                    >
-                      {showCreateProductModal.mode == "create"
-                        ? "Create"
-                        : "Edit"}
-                    </button>
-                  </div>
                 </div>
               ) : null}
               {activeTab == "productSections" ? (
