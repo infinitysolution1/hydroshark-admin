@@ -1,4 +1,5 @@
 import axios from "axios";
+import toast from "react-hot-toast";
 const BASE_URL = "http://144.24.111.231:7020";
 
 const instance = axios.create({
@@ -49,24 +50,24 @@ instance.interceptors.response.use(
       localStorage.clear();
       sessionStorage.clear();
       window.location.href = "/login";
-      //   toast.error("Session expired, please login again");
+      toast.error("Session expired, please login again");
     }
 
-    // if (error.response) {
-    //   if (error.response.data) {
-    //     if (error.response.data.errors) {
-    //       Object.keys(error.response.data.errors).map((key) => {
-    //         toast.error(error.response.data.errors[key][0]);
-    //       });
-    //     } else {
-    //       toast.error("Some error has occurred, Please try again!");
-    //     }
-    //   } else {
-    //     toast.error("Some error has occurred, Please try again!");
-    //   }
-    // } else {
-    //   toast.error("Some error has occurred, Please try again!");
-    // }
+    if (error.response) {
+      if (error.response.data) {
+        if (error.response.data.errors) {
+          Object.keys(error.response.data.errors).map((key) => {
+            toast.error(error.response.data.errors[key][0]);
+          });
+        } else {
+          toast.error("Some error has occurred, Please try again!");
+        }
+      } else {
+        toast.error("Some error has occurred, Please try again!");
+      }
+    } else {
+      toast.error("Some error has occurred, Please try again!");
+    }
 
     console.log("res.errres", error);
     throw error;
