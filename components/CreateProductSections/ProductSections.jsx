@@ -51,7 +51,7 @@ const ProductSections = ({ productSections, productId }) => {
   const CreateProductSection = (data) => {
     setLoading(true);
     instance
-      .post("/drinks/product_section/", {
+      .post("/drinks/product-section/", {
         ...data,
         price: parseInt(data.price),
         discounted_amount: parseInt(data.discounted_amount),
@@ -67,6 +67,8 @@ const ProductSections = ({ productSections, productId }) => {
           ...showCreateProductModal,
           refresh: !showCreateProductModal.refresh,
         });
+        getProducts(productId);
+        reset(defaultValues);
         setLoading(false);
       })
       .catch((err) => {
@@ -78,7 +80,7 @@ const ProductSections = ({ productSections, productId }) => {
   const UpdateProductSection = (data) => {
     setLoading(true);
     instance
-      .patch(`/drinks/product_section/${data.id}/`, {
+      .patch(`/drinks/product-section/${data.id}/`, {
         ...data,
         price: parseInt(data.price),
         discounted_amount: parseInt(data.discounted_amount),
@@ -94,6 +96,8 @@ const ProductSections = ({ productSections, productId }) => {
           ...showCreateProductModal,
           refresh: !showCreateProductModal.refresh,
         });
+        getProducts(productId);
+        reset(defaultValues);
         setLoading(false);
       })
       .catch((err) => {
@@ -105,22 +109,37 @@ const ProductSections = ({ productSections, productId }) => {
   const deleteProductSection = (id) => {
     setLoading(true);
     instance
-      .patch(`/drinks/product_section/${id}/`, {
+      .patch(`/drinks/product-section/${id}/`, {
         is_deleted: true,
       })
       .then((res) => {
         console.log("res", res);
+        setLoading(false);
+        getProducts(productId);
       })
       .catch((err) => {
         console.log("err", err);
+        setLoading(false);
+      });
+  };
+
+  const getProducts = (id) => {
+    setLoading(true);
+    instance
+      .get(`/drinks/product/${id}/`)
+      .then((res) => {
+        setLoading(false);
+        setData(res.data.product_sections);
+      })
+      .catch((err) => {
+        console.log("err", err);
+        setLoading(false);
       });
   };
 
   useEffect(() => {
-    if (productSections) {
-      setData(productSections);
-    }
-  }, [productSections]);
+    getProducts(productId);
+  }, []);
 
   return (
     <div className=" w-full flex flex-col items-start">
@@ -242,12 +261,18 @@ const ProductSections = ({ productSections, productId }) => {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              className="bg-black text-white px-4 py-2 rounded-md"
-            >
-              {mode ? "Update Section" : "Add Section"}
-            </button>
+            {loading ? (
+              <div className="bg-black text-white px-4 py-2 rounded-md">
+                <Spinner loading={loading} color={"#ffffff"} size={24} />
+              </div>
+            ) : (
+              <button
+                type="submit"
+                className="bg-black text-white px-4 py-2 rounded-md"
+              >
+                {mode ? "Update Section" : "Add Section"}
+              </button>
+            )}
           </div>
         </form>
       </div>

@@ -23,7 +23,7 @@ const Carts = () => {
       .get(`/admin/abandoned_carts/?page=${page}`)
       .then((res) => {
         console.log("res", res.data);
-        setTotalPages(Math.floor(res.data.count / 10));
+        setTotalPages(Math.ceil(res.data.count / 10));
         setCarts(res.data.results);
       })
       .catch((err) => {
@@ -60,11 +60,12 @@ const Carts = () => {
                     className=" w-full flex flex-row justify-between items-center  border-[1px] border-[#c7c7c7] px-4 py-2 rounded-md mb-2"
                   >
                     <div className=" flex flex-col items-start">
-                      <p className=" text-xs text-black/70">
-                        Net Discount Percentage
-                      </p>
-                      <p className=" text-sm text-black">{`Net Discount Percentage: ${cart.cart_net_discount_percentage}`}</p>
+                      <p className=" text-xs text-black/70">Cart</p>
+                      <p className=" text-sm text-black">{`Cart #${parseInt(
+                        cart.id
+                      )}`}</p>
                     </div>
+
                     <div className=" flex flex-col items-start">
                       <p className=" text-xs text-black/70">Created At</p>
                       <p className=" text-sm text-black">{`${dayjs(
@@ -80,7 +81,10 @@ const Carts = () => {
                       <p className=" text-xs text-black/70">Cart Items</p>
                       <p className=" text-sm text-black">{`${cart.cart_items.length}`}</p>
                     </div>
-
+                    <div className=" flex flex-col items-start">
+                      <p className=" text-xs text-black/70">Cart Total</p>
+                      <p className=" text-sm text-black">{`${cart.cart_total_price}`}</p>
+                    </div>
                     <div className=" flex flex-col items-start">
                       <p className=" text-xs text-black/70">Final Amount</p>
                       <p className=" text-sm text-black">{`${cart.cart_final_amount}`}</p>

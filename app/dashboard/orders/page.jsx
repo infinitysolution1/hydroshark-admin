@@ -25,7 +25,7 @@ const Orders = () => {
       .get(`/admin/orders/?page=${page}`)
       .then((res) => {
         console.log("res", res.data);
-        setTotalPages(Math.floor(res.data.count / 10));
+        setTotalPages(Math.ceil(res.data.count / 10));
         setLoading(false);
         setOrders(res.data.results);
       })
