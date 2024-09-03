@@ -187,7 +187,7 @@ const ViewCartDetailsModal = () => {
                             item.product_section?.linked_product
                               ?.product_primary_image?.image?.cloudfront
                           }
-                          layout="fill"
+                          fill
                           objectFit="contain"
                         />
                       </div>

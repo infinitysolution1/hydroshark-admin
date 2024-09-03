@@ -10,7 +10,7 @@ const AdminNavbar = () => {
         <div className=" h-[7.5vh] w-[7.5vh] relative">
           <Image
             src={process.env.NEXT_PUBLIC_API_URL + "/hydroshark.png"}
-            layout="fill"
+            fill
             alt="hydroshark"
           />
         </div>

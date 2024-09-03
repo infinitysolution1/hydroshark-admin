@@ -151,8 +151,8 @@ const ProductImages = ({ productId, productImages }) => {
               <div className="relative w-[200px] h-[200px] mr-4">
                 <Image
                   src={file.image.cloudfront}
-                  layout="fill"
-                  objectFit="contain"
+                  fill
+                  objectFit="cover"
                   className="rounded-md"
                 />
               </div>
