@@ -19,7 +19,6 @@ instance.interceptors.request.use(
     if (isNotExcludedRequest(config)) {
       const authToken = localStorage.getItem("token");
       if (authToken) {
-        console.log("authToken", authToken);
         config.headers.Authorization = `Bearer ${authToken}`;
       }
     }

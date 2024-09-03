@@ -13,7 +13,6 @@ export default function RootLayout({ children }) {
     console.log("RootLayout");
     const token = localStorage.getItem("token");
 
-    console.log("token", token);
     if (!token) {
       router.push("/login");
     }
