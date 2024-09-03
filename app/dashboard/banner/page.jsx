@@ -229,7 +229,7 @@ const Banner = () => {
                 <p className="text-base mt-2 text-black">Loading Banner Data</p>
               </div>
             ) : pastBanners.length > 0 ? (
-              <div className="flex flex-col gap-y-2 max-h-[30vh] overflow-y-scroll">
+              <div className=" grid grid-cols-2 gap-2 max-h-[30vh] overflow-y-scroll">
                 {pastBanners.map((option, index) => (
                   <div
                     key={index}
