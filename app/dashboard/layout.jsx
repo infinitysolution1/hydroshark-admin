@@ -5,6 +5,7 @@ import CreateProductModal from "@/components/Modals/CreateProductModal";
 import ViewUserDetailsModal from "@/components/Modals/ViewUserDetailsModal";
 import ViewOrderDetailsModal from "@/components/Modals/ViewOrderDetailsModal";
 import ViewCartDetailsModal from "@/components/Modals/ViewCartDetailsModal";
+import toast, { Toaster } from "react-hot-toast";
 
 export const metadata = {
   title: "Dashboard | Hydroshark",
@@ -25,6 +26,14 @@ const Layout = ({ children }) => {
       <ViewUserDetailsModal />
       <ViewOrderDetailsModal />
       <ViewCartDetailsModal />
+      <Toaster
+        position={"top-right"}
+        toastOptions={{
+          className: "",
+          duration: 2000,
+        }}
+        reverseOrder={false}
+      />
     </main>
   );
 };

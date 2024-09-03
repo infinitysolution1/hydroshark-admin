@@ -27,7 +27,7 @@ const Feedback = () => {
       .then((res) => {
         console.log("res", res.data);
         setLoading(false);
-        setTotalPages(Math.floor(res.data.count / 10));
+        setTotalPages(Math.ceil(res.data.count / 10));
         setFeedbacks(res.data.results);
       })
       .catch((err) => {
