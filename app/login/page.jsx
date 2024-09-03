@@ -83,7 +83,7 @@ const Login = () => {
       <div className=" h-screen w-screen absolute z-0">
         <Image
           src={process.env.NEXT_PUBLIC_API_URL + "/img9.webp"}
-          layout="fill"
+          fill
           objectFit="cover"
         />
       </div>
@@ -93,7 +93,7 @@ const Login = () => {
           <div className=" h-[7.5vh] w-[7.5vh] relative">
             <Image
               src={process.env.NEXT_PUBLIC_API_URL + "/hydroshark.png"}
-              layout="fill"
+              fill
               alt="hydroshark"
             />
           </div>
