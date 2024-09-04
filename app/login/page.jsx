@@ -59,9 +59,10 @@ const Login = () => {
     instance
       .post("/accounts/login/", obj)
       .then((res) => {
-        if (res.data.user.is_superuser) {
+        if (res.data.user.is_superuser || res.data.user.is_staff) {
           console.log("res", res);
           localStorage.setItem("token", res.data.access_token);
+
           setUser(res.data.user);
           router.push("/dashboard");
           setLoading(false);
@@ -159,7 +160,17 @@ const Login = () => {
                 id="phone"
                 placeholder="Phone Number"
                 className="w-full p-2 my-1 text-black border-[0.5px] border-[#c7c7c7] rounded-md"
-                {...register("phone", { required: "Email is required" })}
+                {...register("phone", {
+                  required: "Email is required",
+                  minLength: {
+                    value: 10,
+                    message: "Phone number should be of 10 digits",
+                  },
+                  maxLength: {
+                    value: 10,
+                    message: "Phone number should be of 10 digits",
+                  },
+                })}
               />
               {errors?.email ? (
                 <span className="text-red-500 text-xs">

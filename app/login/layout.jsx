@@ -7,6 +7,7 @@ const Layout = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    console.log("token abcd", token);
 
     if (token) {
       router.push("/dashboard");
