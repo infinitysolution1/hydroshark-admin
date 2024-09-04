@@ -68,7 +68,9 @@ const Login = () => {
           setLoading(false);
         } else {
           throw new Error("You are not authorized to access this page");
-          // setError("You are not authorized to access this page");
+          localStorage.clear();
+          sessionStorage.clear();
+          window.location.href = "/login";
           setLoading(false);
         }
       })
