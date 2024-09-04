@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "export",
+  reactStrictMode: false,
+  trailingSlash: true,
   images: {
     remotePatterns: [
       {
@@ -11,6 +14,7 @@ const nextConfig = {
         hostname: "d39g9o3xvlax7g.cloudfront.net",
       },
     ],
+    unoptimized: true,
   },
   //   transpilePackages: ["three"],
   //   webpack: (config, { isServer }) => {

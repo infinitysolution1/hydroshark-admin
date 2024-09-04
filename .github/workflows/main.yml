@@ -1,0 +1,34 @@
+name: Deploy to S3
+
+on:
+  push:
+    branches:
+      - main # Replace with your branch if different
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Next.js
+        run: |
+          npm run build  # Ensure you have this script in your package.json
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Sync out folder to S3
+        run: |
+          aws s3 sync out/ s3://${{ secrets.S3_BUCKET_NAME_ADMIN }} --exact-timestamps --delete
