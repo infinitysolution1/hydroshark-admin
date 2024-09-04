@@ -167,6 +167,22 @@ const ViewUserDetailsModal = () => {
                     disabled
                   />
                 </div>
+                {/* <div className="flex flex-col ">
+                  
+                  <input
+                    type="checkbox"
+                    value={
+                      userDetails.is_superuser
+                        ? "Admin"
+                        : userDetails.is_staff
+                        ? "Staff"
+                        : "User"
+                    }
+                    className={inputClass}
+                    disabled={userDetails.is_superuser}
+                  />
+                  <label className={labelClass}>Role</label>
+                </div> */}
               </div>
             </div>
 
@@ -200,24 +216,32 @@ const ViewUserDetailsModal = () => {
               <h2 className=" text-xl font-semibold text-black mb-4">
                 Address
               </h2>
-              <div className=" w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {addressList.map((address, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className="flex flex-row w-full justify-between bg-gray-100 p-4 rounded-lg "
-                    >
-                      <div className=" w-10/12 lg:w-9/12 flex flex-row text-sm flex-wrap items-start">
-                        <p className="  text-black">
-                          {address.address_line_1},
-                        </p>
-                        <p className=" text-black">{address.address_line_2},</p>
-                        <p className="  text-black">{` ${address.city}, ${address.state},`}</p>
-                        <p className="  text-black">{` ${address.country}, ${address.zipcode}`}</p>
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className=" flex flex-col items-start">
+                {addressList.length > 0 ? (
+                  <div className=" w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {addressList.map((address, index) => {
+                      return (
+                        <div
+                          key={index}
+                          className="flex flex-row w-full justify-between bg-gray-100 p-4 rounded-lg "
+                        >
+                          <div className=" w-10/12 lg:w-9/12 flex flex-row text-sm flex-wrap items-start">
+                            <p className="  text-black">
+                              {address.address_line_1},
+                            </p>
+                            <p className=" text-black">
+                              {address.address_line_2},
+                            </p>
+                            <p className="  text-black">{` ${address.city}, ${address.state},`}</p>
+                            <p className="  text-black">{` ${address.country}, ${address.zipcode}`}</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className=" text-black text-sm">No Address Found</p>
+                )}
               </div>
             </div>
           </div>
