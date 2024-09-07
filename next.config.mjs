@@ -45,15 +45,15 @@ const nextConfig = {
     ];
   },
 
-  async rewrites() {
-    return [
-      {
-        source: "/:path*",
-        destination:
-          "http://af08e05aaa6f34c1c9a51184d88204d6-1460487804.us-east-1.elb.amazonaws.com/:path*",
-      },
-    ];
-  },
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: "/:path*",
+  //       destination:
+  //         "http://af08e05aaa6f34c1c9a51184d88204d6-1460487804.us-east-1.elb.amazonaws.com/:path*",
+  //     },
+  //   ];
+  // },
 };
 
 export default nextConfig;
