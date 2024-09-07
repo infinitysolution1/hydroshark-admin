@@ -49,7 +49,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "http://api-prod.hydroshark.in/:path*/",
+        destination: "http://api-prod.hydroshark.in/:path*",
       },
     ];
   },
