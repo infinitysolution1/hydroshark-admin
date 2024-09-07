@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 // const BASE_URL = "http://144.24.111.231:7020";
 // const BASE_URL = "https://api.hydroshark.in";
 const BASE_URL =
-  "http://af08e05aaa6f34c1c9a51184d88204d6-1460487804.us-east-1.elb.amazonaws.com/";
+  "http://af08e05aaa6f34c1c9a51184d88204d6-1460487804.us-east-1.elb.amazonaws.com";
 
 const instance = axios.create({
   baseURL: BASE_URL,
