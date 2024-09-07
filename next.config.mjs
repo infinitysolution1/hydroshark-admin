@@ -48,7 +48,7 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: "/api/:path*",
+        source: "/:path*",
         destination: "http://api-prod.hydroshark.in/:path*",
       },
     ];
