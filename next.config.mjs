@@ -48,8 +48,8 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: "/:path*",
-        destination: "http://144.24.111.231:7020/:path*",
+        source: "/:path*/",
+        destination: process.env.NEXT_PUBLIC_API + "/:path*/",
       },
     ];
   },
