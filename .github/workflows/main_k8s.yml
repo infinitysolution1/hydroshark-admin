@@ -26,34 +26,17 @@ jobs:
         run: |
           aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.EKS_CLUSTER_NAME }}
 
-      - name: Create secret YAML file
-        run: |
-          cat <<EOF > hydroshark-admin-secret.yaml
-          apiVersion: v1
-          kind: Secret
-          metadata:
-            name: hydroshark-admin-secret
-            namespace: default
-          type: Opaque
-          data:
-            DEBUG: $(echo -n "${{ secrets.DEBUG }}" | base64 -w 0)
-            NEXT_PUBLIC_API_URL: $(echo -n "${{ secrets.NEXT_PUBLIC_API_URL }}" | base64 -w 0)
-            NEXT_PUBLIC_API: $(echo -n "${{ secrets.NEXT_PUBLIC_API }}" | base64 -w 0)
-          EOF
-
-      - name: Print secret YAML file
-        run: cat hydroshark-admin-secret.yaml
-
-      - name: Apply secret to EKS cluster
-        run: kubectl apply -f hydroshark-admin-secret.yaml
-
       - name: Login to ECR
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
           
-      - name: Build and push Docker image
+      - name: Build and push Docker image with build-time environment variables
         run: |
-          docker build -t hydroshark-admin .
+          docker build \
+            --build-arg NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }} \
+            --build-arg NEXT_PUBLIC_API=${{ secrets.NEXT_PUBLIC_API }} \
+            --build-arg DEBUG=${{ secrets.DEBUG }} \
+            -t hydroshark-admin .
           docker tag hydroshark-admin:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
 

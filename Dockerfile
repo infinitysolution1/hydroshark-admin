@@ -18,6 +18,15 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_API
+ARG DEBUG
+
+# Export as environment variables
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API=$NEXT_PUBLIC_API
+ENV DEBUG=$DEBUG
+
 RUN npm run build
 
 FROM base AS runner
