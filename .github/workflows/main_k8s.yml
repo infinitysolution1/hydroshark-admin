@@ -1,0 +1,61 @@
+name: Deploy K8s
+on:
+  push:
+    branches:
+      - db
+
+permissions:
+  id-token: write  # This is required for requesting the JWT
+  contents: read   # This is required for actions/checkout
+
+jobs:
+  deploy-to-k8s:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1.7.0
+        with:
+          role-to-assume: arn:aws:iam::381492036637:role/github_actions_role
+          aws-region: ${{ secrets.AWS_REGION }}
+          mask-aws-account-id: 'false'
+
+      - name: Update Kubeconfig using AWS CLI
+        run: |
+          aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.EKS_CLUSTER_NAME }}
+
+      - name: Create secret YAML file
+        run: |
+          cat <<EOF > hydroshark-admin-secret.yaml
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: hydroshark-admin-secret
+            namespace: default
+          type: Opaque
+          data:
+            DEBUG: $(echo -n "${{ secrets.DEBUG }}" | base64 -w 0)
+            ENVIROMENT: $(echo -n "${{ secrets.ENVIROMENT }}" | base64 -w 0)
+            NEXT_PUBLIC_API_URL: $(echo -n "${{ secrets.NEXT_PUBLIC_API_URL }}" | base64 -w 0)
+          EOF
+
+      - name: Print secret YAML file
+        run: cat hydroshark-admin-secret.yaml
+
+      - name: Apply secret to EKS cluster
+        run: kubectl apply -f hydroshark-admin-secret.yaml
+
+      - name: Login to ECR
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+          
+      - name: Build and push Docker image
+        run: |
+          docker build -t hydroshark-admin .
+          docker tag hydroshark-admin:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
+
+      - name: Deploy to Kubernetes
+        run: kubectl rollout restart deploy ${{ secrets.K8S_DEPLOYMENT_NAME }}
