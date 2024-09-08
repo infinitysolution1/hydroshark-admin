@@ -37,7 +37,7 @@ jobs:
           type: Opaque
           data:
             DEBUG: $(echo -n "${{ secrets.DEBUG }}" | base64 -w 0)
-            ENVIROMENT: $(echo -n "${{ secrets.ENVIROMENT }}" | base64 -w 0)
+            ENVIORNMENT: $(echo -n "${{ secrets.ENVIORNMENT }}" | base64 -w 0)
             NEXT_PUBLIC_API_URL: $(echo -n "${{ secrets.NEXT_PUBLIC_API_URL }}" | base64 -w 0)
           EOF
 
