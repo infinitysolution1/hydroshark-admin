@@ -94,7 +94,7 @@ const Login = () => {
           router.push("/dashboard");
           setLoading(false);
         } else {
-          throw new Error("You are not authorized to access this page");
+          throw new Error("You are not authorized to access this admin");
           localStorage.clear();
           sessionStorage.clear();
           window.location.href = "/login";
@@ -209,6 +209,8 @@ const Login = () => {
                 <span className=" text-sm"> </span>
               )}
             </div>
+
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
             <button
               type="submit"
