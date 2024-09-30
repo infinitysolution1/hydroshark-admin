@@ -77,21 +77,21 @@ const Orders = () => {
                   <div className=" flex flex-col items-start">
                     <p className=" text-xs text-black/70">Payment Mode</p>
                     <p className=" text-xs text-black">
-                      {order.payment.payment_method || "N/A"}
+                      {order.payment?.payment_method || "N/A"}
                     </p>
                   </div>
 
                   <div className=" flex flex-col items-start">
                     <p className=" text-xs text-black/70">Payment Status</p>
                     <p className=" text-xs text-black px-2 bg-gray-200 rounded-md">
-                      {order.payment.payment_status || "N/A"}
+                      {order.payment?.payment_status || "N/A"}
                     </p>
                   </div>
 
                   <div className=" flex flex-col items-start">
                     <p className=" text-xs text-black/70">Order Amount</p>
                     <p className=" text-xs text-black">
-                      {order.payment.payment_amount || "N/A"}
+                      {order.payment?.payment_amount || "N/A"}
                     </p>
                   </div>
 
