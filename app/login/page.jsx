@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FieldValues, set, useForm } from "react-hook-form";
 import instance from "@/utils/instance";
 import { useRouter } from "next/navigation";
@@ -49,6 +49,33 @@ const Login = () => {
       });
   };
 
+  const getUser = () => {
+    instance
+      .get("/accounts/user/")
+      .then((res) => {
+        if (res.data.user.is_superuser || res.data.user.is_staff) {
+          console.log("res", res);
+          setUser(res.data.user);
+          router.push("/dashboard");
+        } else {
+          throw new Error("You are not authorized to access this page");
+          localStorage.clear();
+          sessionStorage.clear();
+          window.location.href = "/login";
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      getUser();
+    }
+  }, []);
+
   const handleLogin = () => {
     setLoading(true);
     let obj = {
@@ -67,7 +94,7 @@ const Login = () => {
           router.push("/dashboard");
           setLoading(false);
         } else {
-          throw new Error("You are not authorized to access this page");
+          throw new Error("You are not authorized to access this admin");
           localStorage.clear();
           sessionStorage.clear();
           window.location.href = "/login";
@@ -182,6 +209,8 @@ const Login = () => {
                 <span className=" text-sm"> </span>
               )}
             </div>
+
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
             <button
               type="submit"

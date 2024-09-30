@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // output: "export",
+  output: "standalone",
   reactStrictMode: false,
   // trailingSlash: true,
   images: {
@@ -41,6 +41,15 @@ const nextConfig = {
         source: "/",
         destination: "/login",
         permanent: true,
+      },
+    ];
+  },
+
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*/",
+        destination: process.env.NEXT_PUBLIC_API + "/api/:path*/",
       },
     ];
   },

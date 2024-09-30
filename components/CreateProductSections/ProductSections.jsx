@@ -27,6 +27,7 @@ const ProductSections = ({ productSections, productId }) => {
   const [data, setData] = useState([]);
   const [newData, setNewData] = useState([]);
   const [mode, setMode] = useState("create");
+  const [selectedSection, setSelectedSection] = useState({});
   const { showCreateProductModal, setShowCreateProductModal } = useStore();
 
   const {
@@ -70,6 +71,8 @@ const ProductSections = ({ productSections, productId }) => {
         getProducts(productId);
         reset(defaultValues);
         setLoading(false);
+        setSelectedSection({});
+        setMode("create");
       })
       .catch((err) => {
         setLoading(false);
@@ -80,7 +83,7 @@ const ProductSections = ({ productSections, productId }) => {
   const UpdateProductSection = (data) => {
     setLoading(true);
     instance
-      .patch(`/drinks/product-section/${data.id}/`, {
+      .patch(`/drinks/product-section/${selectedSection.id}/`, {
         ...data,
         price: parseInt(data.price),
         discounted_amount: parseInt(data.discounted_amount),
@@ -99,6 +102,8 @@ const ProductSections = ({ productSections, productId }) => {
         getProducts(productId);
         reset(defaultValues);
         setLoading(false);
+        setSelectedSection({});
+        setMode("create");
       })
       .catch((err) => {
         setLoading(false);
@@ -240,9 +245,7 @@ const ProductSections = ({ productSections, productId }) => {
             <input
               type="checkbox"
               id="in_stock"
-              {...register(`in_stock`, {
-                required: true,
-              })}
+              {...register(`in_stock`)}
               className={`${inputClass} text-4xl h-4 w-4 `}
             />
             <label className={`${labelClass} ml-2`} htmlFor="in_stock">
@@ -328,6 +331,7 @@ const ProductSections = ({ productSections, productId }) => {
                         "hydroshark_points_on_purchase",
                         section.hydroshark_points_on_purchase
                       );
+                      setSelectedSection(section);
                       setValue("in_stock", section.in_stock);
                     }}
                     className="text-black py-2 rounded-md"
