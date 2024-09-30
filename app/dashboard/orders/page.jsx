@@ -64,13 +64,13 @@ const Orders = () => {
                 >
                   <div className=" flex flex-col items-start">
                     <p className=" text-xs text-black/70">Order ID</p>
-                    <p className=" text-base text-black">{`Order# ${order.id}`}</p>
+                    <p className=" text-base text-black">{`Order# ${order?.id}`}</p>
                   </div>
 
                   <div className=" flex flex-col items-start">
                     <p className=" text-xs text-black/70">Order Date</p>
                     <p className=" text-xs text-black">
-                      {dayjs(order.created_at).format("hh:MM a , DD-MM-YYYY ")}
+                      {dayjs(order?.created_at).format("hh:MM a , DD-MM-YYYY ")}
                     </p>
                   </div>
 
